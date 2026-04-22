@@ -50,8 +50,8 @@ export default function Home() {
               <OpinionSection onArticleClick={handleArticleClick} />
             </div>
             <div className="lg:col-span-4">
-              <TrendingSidebar onArticleClick={handleArticleClick} />
-              <div className="space-y-6">
+              <div className="lg:sticky lg:top-24 space-y-6">
+                <TrendingSidebar onArticleClick={handleArticleClick} />
                 <WeatherWidget />
                 <ExchangeRateWidget />
                 <PrayerTimesWidget />

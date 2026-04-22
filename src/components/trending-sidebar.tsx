@@ -55,7 +55,7 @@ export function TrendingSidebar({ onArticleClick }: TrendingSidebarProps) {
   const topArticles = trendingArticles.slice(0, 5);
 
   return (
-    <aside className="space-y-6 lg:sticky lg:top-24">
+    <aside className="space-y-6">
       {/* Trending */}
       <Card className="border-border/60 overflow-hidden rounded-2xl shadow-sm">
         <CardHeader className="bg-gradient-to-r from-primary to-red-600 text-white pb-3 pt-4 px-5">
