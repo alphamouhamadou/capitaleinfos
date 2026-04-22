@@ -331,12 +331,12 @@ export function WeatherWidget() {
   const data = weatherData[selectedCity];
 
   return (
-    <Card className="border-border/60 overflow-hidden rounded-2xl shadow-sm">
+    <Card className="border-border/40 overflow-hidden rounded-2xl shadow-sm bg-card/80 backdrop-blur-sm">
       <CardHeader className="bg-gradient-to-br from-amber-500 to-orange-600 text-white pb-3 pt-4 px-5">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2.5 text-base font-bold">
-            <div className="h-7 w-7 rounded-lg bg-white/15 flex items-center justify-center">
-              <Cloud className="h-4 w-4" />
+          <CardTitle className="flex items-center gap-2.5 text-[13px] font-bold">
+            <div className="h-6 w-6 rounded-lg bg-white/15 flex items-center justify-center">
+              <Cloud className="h-3.5 w-3.5" />
             </div>
             Météo
           </CardTitle>
@@ -456,12 +456,12 @@ export function ExchangeRateWidget() {
   }, []);
 
   return (
-    <Card className="border-border/60 overflow-hidden rounded-2xl shadow-sm">
+    <Card className="border-border/40 overflow-hidden rounded-2xl shadow-sm bg-card/80 backdrop-blur-sm">
       <CardHeader className="bg-gradient-to-br from-emerald-600 to-teal-700 text-white pb-3 pt-4 px-5">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2.5 text-base font-bold">
-            <div className="h-7 w-7 rounded-lg bg-white/15 flex items-center justify-center">
-              <TrendingUp className="h-4 w-4" />
+          <CardTitle className="flex items-center gap-2.5 text-[13px] font-bold">
+            <div className="h-6 w-6 rounded-lg bg-white/15 flex items-center justify-center">
+              <TrendingUp className="h-3.5 w-3.5" />
             </div>
             Devises
           </CardTitle>
@@ -529,12 +529,12 @@ export function PrayerTimesWidget() {
   const data = prayerData[selectedCity];
 
   return (
-    <Card className="border-border/60 overflow-hidden rounded-2xl shadow-sm">
+    <Card className="border-border/40 overflow-hidden rounded-2xl shadow-sm bg-card/80 backdrop-blur-sm">
       <CardHeader className="bg-gradient-to-br from-emerald-700 to-green-800 text-white pb-3 pt-4 px-5">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2.5 text-base font-bold">
-            <div className="h-7 w-7 rounded-lg bg-white/15 flex items-center justify-center">
-              <Moon className="h-4 w-4" />
+          <CardTitle className="flex items-center gap-2.5 text-[13px] font-bold">
+            <div className="h-6 w-6 rounded-lg bg-white/15 flex items-center justify-center">
+              <Moon className="h-3.5 w-3.5" />
             </div>
             Prières
           </CardTitle>

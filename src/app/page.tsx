@@ -42,15 +42,19 @@ export default function Home() {
       <main className="flex-1">
         <HeroSection onArticleClick={handleArticleClick} />
 
+        <div className="section-divider mx-auto max-w-7xl" />
+
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             <div className="lg:col-span-8">
               <LatestNews onArticleClick={handleArticleClick} />
+              <div className="section-divider my-0" />
               <CategorySection onArticleClick={handleArticleClick} />
+              <div className="section-divider my-0" />
               <OpinionSection onArticleClick={handleArticleClick} />
             </div>
             <div className="lg:col-span-4">
-              <div className="lg:sticky lg:top-24 space-y-6">
+              <div className="lg:sticky lg:top-24 space-y-5">
                 <TrendingSidebar onArticleClick={handleArticleClick} />
                 <WeatherWidget />
                 <ExchangeRateWidget />
@@ -59,6 +63,8 @@ export default function Home() {
             </div>
           </div>
         </div>
+
+        <div className="section-divider mx-auto max-w-7xl mt-4" />
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <NewsletterSection />
