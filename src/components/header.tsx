@@ -13,14 +13,14 @@ import {
 import { Button } from '@/components/ui/button';
 
 const navLinks = [
-  { label: 'À la une', href: '#' },
-  { label: 'Politique', href: '#politique' },
-  { label: 'Économie', href: '#economie' },
-  { label: 'Sport', href: '#sport' },
-  { label: 'Culture', href: '#culture' },
-  { label: 'Société', href: '#societe' },
-  { label: 'Tech', href: '#tech' },
-  { label: 'International', href: '#international' },
+  { label: 'À la une', href: '#a-la-une', action: 'scroll' },
+  { label: 'Politique', href: '#rubriques', category: 'Politique' },
+  { label: 'Économie', href: '#rubriques', category: 'Économie' },
+  { label: 'Sport', href: '#rubriques', category: 'Sport' },
+  { label: 'Culture', href: '#rubriques', category: 'Culture' },
+  { label: 'Société', href: '#rubriques', category: 'Société' },
+  { label: 'Tech', href: '#rubriques', category: 'Technologie' },
+  { label: 'International', href: '#rubriques', category: 'International' },
 ];
 
 interface HeaderProps {
@@ -64,12 +64,20 @@ export function Header({ onSearchOpen }: HeaderProps) {
     };
   }, [mobileOpen]);
 
-  const handleNavClick = useCallback((href: string) => {
+  const handleNavClick = useCallback((href: string, category?: string) => {
     setMobileOpen(false);
-    if (href !== '#') {
+    if (category) {
+      // Dispatch a custom event to tell CategorySection to switch tab
+      window.dispatchEvent(new CustomEvent('switch-category', { detail: category }));
+    }
+    if (href && href !== '#') {
       setTimeout(() => {
         const el = document.querySelector(href);
-        el?.scrollIntoView({ behavior: 'smooth' });
+        if (el) {
+          const headerHeight = 120;
+          const y = el.getBoundingClientRect().top + window.scrollY - headerHeight;
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        }
       }, 300);
     }
   }, []);
@@ -126,10 +134,10 @@ export function Header({ onSearchOpen }: HeaderProps) {
 
             {/* Logo + Navigation */}
             <div className="flex h-16 items-center justify-between">
-              <a href="#" className="flex items-center gap-3 group">
+              <a href="#a-la-une" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="flex items-center gap-3 group">
                 <div className="relative h-11 w-11 rounded-xl overflow-hidden ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all">
                   <img
-                    src="/img/logo.png"
+                    src="/img/logo-capitale-infos.jpg"
                     alt="Capitale Infos"
                     className="h-full w-full object-cover"
                   />
@@ -148,11 +156,11 @@ export function Header({ onSearchOpen }: HeaderProps) {
               <nav className="hidden lg:flex items-center gap-0.5" aria-label="Navigation principale">
                 {navLinks.map((link) => (
                   <a
-                    key={link.href}
+                    key={link.label}
                     href={link.href}
                     onClick={(e) => {
                       e.preventDefault();
-                      handleNavClick(link.href);
+                      handleNavClick(link.href, link.category);
                     }}
                     className="relative px-3 py-2 text-[13px] font-semibold text-muted-foreground transition-colors hover:text-foreground rounded-lg hover:bg-primary/5 group"
                   >
@@ -199,7 +207,7 @@ export function Header({ onSearchOpen }: HeaderProps) {
                 <div className="flex items-center gap-3 mb-4">
                   <div className="h-12 w-12 rounded-xl overflow-hidden ring-2 ring-white/30">
                     <img
-                      src="/img/logo.png"
+                      src="/img/logo-capitale-infos.jpg"
                       alt="Capitale Infos"
                       className="h-full w-full object-cover"
                     />
@@ -226,8 +234,8 @@ export function Header({ onSearchOpen }: HeaderProps) {
             <nav className="flex-1 overflow-y-auto px-3 py-4" aria-label="Navigation mobile">
               {navLinks.map((link, index) => (
                 <button
-                  key={link.href}
-                  onClick={() => handleNavClick(link.href)}
+                  key={link.label}
+                  onClick={() => handleNavClick(link.href, link.category)}
                   className="w-full text-left flex items-center gap-3 px-4 py-3.5 text-[15px] font-medium text-foreground hover:text-primary transition-all rounded-xl hover:bg-primary/5 group"
                 >
                   <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-xs font-bold text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">

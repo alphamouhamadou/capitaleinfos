@@ -17,7 +17,7 @@ export function LatestNews({ onArticleClick }: LatestNewsProps) {
   const displayArticles = latestArticles.slice(0, 6);
 
   return (
-    <section className="py-10">
+    <section id="dernieres-actualites" className="py-10 scroll-mt-28">
       {/* Section header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-3">

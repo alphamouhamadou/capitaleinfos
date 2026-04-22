@@ -23,7 +23,7 @@ const avatarColors = [
 
 export function OpinionSection({ onArticleClick }: OpinionSectionProps) {
   return (
-    <section className="py-10">
+    <section id="opinions" className="py-10 scroll-mt-28">
       {/* Section header */}
       <div className="flex items-center gap-3 mb-8">
         <div className="h-10 w-1 bg-gradient-to-b from-primary to-primary/40 rounded-full" />

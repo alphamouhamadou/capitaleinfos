@@ -15,7 +15,7 @@ export function HeroSection({ onArticleClick }: HeroSectionProps) {
   const secondaryArticles = featuredArticles.slice(1);
 
   return (
-    <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+    <section id="a-la-une" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 scroll-mt-28">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Main featured article */}
         <motion.div

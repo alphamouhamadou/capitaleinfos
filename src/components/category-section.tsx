@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { Calendar, Clock, ArrowUpRight } from 'lucide-react';
@@ -17,6 +17,10 @@ const tabCategories: Category[] = [
   'Économie',
   'Sport',
   'Culture',
+  'Société',
+  'Technologie',
+  'International',
+  'Environnement',
 ];
 
 interface CategorySectionProps {
@@ -29,8 +33,18 @@ export function CategorySection({ onArticleClick }: CategorySectionProps) {
   const mainArticle = categoryArticles[0];
   const sideArticles = categoryArticles.slice(1, 4);
 
+  // Listen for category switch events from the navigation menu
+  useEffect(() => {
+    const handleSwitchCategory = (e: Event) => {
+      const customEvent = e as CustomEvent<string>;
+      setActiveCategory(customEvent.detail as Category);
+    };
+    window.addEventListener('switch-category', handleSwitchCategory);
+    return () => window.removeEventListener('switch-category', handleSwitchCategory);
+  }, []);
+
   return (
-    <section className="py-10">
+    <section id="rubriques" className="py-10 scroll-mt-28">
       {/* Section header */}
       <div className="flex items-center gap-3 mb-8">
         <div className="h-10 w-1 bg-gradient-to-b from-primary to-primary/40 rounded-full" />
@@ -46,7 +60,7 @@ export function CategorySection({ onArticleClick }: CategorySectionProps) {
             <TabsTrigger
               key={cat}
               value={cat}
-              className="px-5 py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-sm font-semibold transition-all rounded-lg data-[state=active]:shadow-md"
+              className="px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-sm font-semibold transition-all rounded-lg data-[state=active]:shadow-md"
             >
               {cat}
             </TabsTrigger>
@@ -148,6 +162,12 @@ export function CategorySection({ onArticleClick }: CategorySectionProps) {
                   </div>
                 </motion.div>
               ))}
+
+              {sideArticles.length === 0 && mainArticle && (
+                <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm p-8 text-center">
+                  Un seul article disponible dans cette catégorie pour le moment.
+                </div>
+              )}
             </div>
           </motion.div>
         </AnimatePresence>
