@@ -13,13 +13,6 @@ import { NewsletterSection } from '@/components/newsletter-section';
 import { Footer } from '@/components/footer';
 import { ArticleDialog } from '@/components/article-dialog';
 import { SearchDialog } from '@/components/search-dialog';
-import {
-  TopBannerAd,
-  MidBannerAd,
-  BottomBannerAd,
-  SidebarAd,
-  MobileStickyAd,
-} from '@/components/ad-space';
 
 export default function Home() {
   const [selectedArticleId, setSelectedArticleId] = useState<string | null>(null);
@@ -47,48 +40,20 @@ export default function Home() {
       <BreakingNews />
 
       <main className="flex-1">
-        {/* ── TOP BANNER AD (after breaking news) ── */}
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-4">
-          <TopBannerAd />
-        </div>
-
         <HeroSection onArticleClick={handleArticleClick} />
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            {/* ── MAIN CONTENT COLUMN ── */}
             <div className="lg:col-span-8">
               <LatestNews onArticleClick={handleArticleClick} />
-
-              {/* ── MID CONTENT AD 1 ── */}
-              <div className="py-4">
-                <MidBannerAd />
-              </div>
-
               <CategorySection onArticleClick={handleArticleClick} />
-
-              {/* ── MID CONTENT AD 2 ── */}
-              <div className="py-4">
-                <BottomBannerAd />
-              </div>
-
               <OpinionSection onArticleClick={handleArticleClick} />
             </div>
-
-            {/* ── SIDEBAR COLUMN ── */}
             <div className="lg:col-span-4">
               <div className="lg:sticky lg:top-24 space-y-6">
                 <TrendingSidebar onArticleClick={handleArticleClick} />
-
-                {/* ── SIDEBAR AD ── */}
-                <SidebarAd position={0} />
-
                 <WeatherWidget />
                 <ExchangeRateWidget />
-
-                {/* ── SIDEBAR AD 2 ── */}
-                <SidebarAd position={1} />
-
                 <PrayerTimesWidget />
               </div>
             </div>
@@ -101,9 +66,6 @@ export default function Home() {
       </main>
 
       <Footer />
-
-      {/* ── MOBILE STICKY AD ── */}
-      <MobileStickyAd />
 
       <ArticleDialog
         articleId={selectedArticleId}
