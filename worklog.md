@@ -40,3 +40,24 @@ Stage Summary:
 - Desktop navigation also benefits from the same fix
 - User logo integrated throughout (header, mobile menu panel)
 - All 8 categories accessible from navigation
+
+---
+Task ID: 3
+Agent: Main Agent
+Task: Add Weather, Exchange Rates, and Prayer Times widgets
+
+Work Log:
+- Created `src/components/info-widgets.tsx` with 3 professional widgets
+- WeatherWidget: 5-city selector (Dakar, Saint-Louis, Thiès, Ziguinchor, Kaolack), current conditions with temp/feels-like/humidity/wind/UV/visibility, 5-day forecast with min/max temp bars and condition labels, custom SVG weather icons
+- ExchangeRateWidget: 4 currency pairs (EUR/XOF, USD/XOF, GBP/XOF, MAD/XOF) with flags, live change indicators (green up/red down), source attribution BCEAO
+- PrayerTimesWidget: 5 daily prayers in Wolof (Subh, Tisbar, Takussan, Timis, Guéwé) with Arabic names, Hijri date, next prayer highlighted with animated pulse indicator, city selector
+- Removed basic weather widget from TrendingSidebar (replaced by detailed version)
+- Updated page.tsx to include all 3 widgets in the right sidebar
+- Fixed French apostrophe escaping in data strings
+- Build verified: next build succeeds with 0 errors
+
+Stage Summary:
+- 3 new info widgets added to the sidebar below "Les plus lus"
+- Multi-city support for weather and prayer times
+- Consistent design with gradient headers, rounded corners, Framer Motion animations
+- All text in French with Wolof prayer names

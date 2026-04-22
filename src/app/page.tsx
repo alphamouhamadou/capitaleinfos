@@ -7,6 +7,7 @@ import { HeroSection } from '@/components/hero-section';
 import { LatestNews } from '@/components/latest-news';
 import { CategorySection } from '@/components/category-section';
 import { TrendingSidebar } from '@/components/trending-sidebar';
+import { WeatherWidget, ExchangeRateWidget, PrayerTimesWidget } from '@/components/info-widgets';
 import { OpinionSection } from '@/components/opinion-section';
 import { NewsletterSection } from '@/components/newsletter-section';
 import { Footer } from '@/components/footer';
@@ -50,6 +51,11 @@ export default function Home() {
             </div>
             <div className="lg:col-span-4">
               <TrendingSidebar onArticleClick={handleArticleClick} />
+              <div className="space-y-6">
+                <WeatherWidget />
+                <ExchangeRateWidget />
+                <PrayerTimesWidget />
+              </div>
             </div>
           </div>
         </div>
