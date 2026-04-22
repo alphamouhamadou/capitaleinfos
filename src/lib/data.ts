@@ -23,7 +23,6 @@ export type Category =
   | "Sport"
   | "Culture"
   | "Société"
-  | "Technologie"
   | "International"
   | "Environnement";
 
@@ -33,7 +32,6 @@ export const categories: Category[] = [
   "Sport",
   "Culture",
   "Société",
-  "Technologie",
   "International",
   "Environnement",
 ];
@@ -44,7 +42,6 @@ export const categoryColors: Record<Category, string> = {
   Sport: "bg-green-600 text-white",
   Culture: "bg-purple-600 text-white",
   Société: "bg-teal-600 text-white",
-  Technologie: "bg-slate-700 text-white",
   International: "bg-orange-600 text-white",
   Environnement: "bg-emerald-600 text-white",
 };
@@ -55,7 +52,6 @@ export const categoryImageMap: Record<Category, string> = {
   Sport: "/img/sport.jpg",
   Culture: "/img/culture.jpg",
   Société: "/img/societe.jpg",
-  Technologie: "/img/tech.jpg",
   International: "/img/goree.jpg",
   Environnement: "/img/goree.jpg",
 };
@@ -164,10 +160,10 @@ Le plan s'articule autour de trois piliers fondamentaux. Le premier concerne la 
 Le deuxième pilier est la digitalisation des services administratifs. D'ici fin 2027, tous les documents administratifs pourront être demandés en ligne, réduisant considérablement les files d'attente dans les administrations.
 
 Enfin, le troisième pilier porte sur la couverture numérique : 100% de la métropole dakaroise sera couverte en fibre optique d'ici 2028, avec des points WiFi publics gratuits dans tous les espaces verts et les transports en commun.`,
-    category: "Technologie",
+    category: "Société",
     author: authors[6],
     date: "2026-04-21T14:30:00",
-    image: "/img/tech.jpg",
+    image: "/img/societe.jpg",
     readTime: 5,
     isFeatured: false,
     isTrending: false,
@@ -242,10 +238,10 @@ Cette levée de fonds, dirigée par des fonds d'investissement américains et eu
 Forte de 25 millions d'utilisateurs actifs au Sénégal, au Mali, en Côte d'Ivoire et au Burkina Faso, WaveGen a développé une solution de paiement mobile qui permet de réaliser des transactions instantanées à un coût quasi nul, même dans les zones les plus reculées.
 
 Le fondateur et PDG de WaveGen, un jeune entrepreneur sénégalais de 32 ans, a déclaré : « Cette valorisation montre que le talent africain peut rivaliser avec les meilleurs au monde. Le Sénégal est en train de devenir le Silicon Valley de l'Afrique. »`,
-    category: "Technologie",
+    category: "Économie",
     author: authors[6],
     date: "2026-04-20T08:00:00",
-    image: "/img/tech.jpg",
+    image: "/img/economie.jpg",
     readTime: 5,
     isFeatured: false,
     isTrending: true,

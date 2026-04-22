@@ -18,7 +18,6 @@ const tabCategories: Category[] = [
   'Sport',
   'Culture',
   'Société',
-  'Technologie',
   'International',
   'Environnement',
 ];

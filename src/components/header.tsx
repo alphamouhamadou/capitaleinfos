@@ -19,7 +19,6 @@ const navLinks = [
   { label: 'Sport', href: '#rubriques', category: 'Sport' },
   { label: 'Culture', href: '#rubriques', category: 'Culture' },
   { label: 'Société', href: '#rubriques', category: 'Société' },
-  { label: 'Tech', href: '#rubriques', category: 'Technologie' },
   { label: 'International', href: '#rubriques', category: 'International' },
 ];
 
