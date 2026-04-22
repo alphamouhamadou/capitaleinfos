@@ -12,124 +12,142 @@ interface HeroSectionProps {
 
 export function HeroSection({ onArticleClick }: HeroSectionProps) {
   const mainArticle = featuredArticles[0];
-  const secondaryArticles = featuredArticles.slice(1);
+  const secondaryArticles = featuredArticles.slice(1, 4);
 
   return (
     <section id="a-la-une" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 scroll-mt-28">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        {/* Main featured article */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: 'easeOut' }}
-          className="lg:col-span-7 relative group cursor-pointer"
-          onClick={() => onArticleClick(mainArticle.id)}
-        >
-          <div className="relative aspect-[16/10] lg:aspect-[4/3] overflow-hidden rounded-2xl shadow-2xl shadow-black/10 dark:shadow-black/30">
-            <Image
-              src="/img/hero-dakar.jpg"
-              alt={mainArticle.title}
-              fill
-              className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-              priority
-              sizes="(max-width: 1024px) 100vw, 58vw"
-            />
-            {/* Multi-layer gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/10" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent" />
+      {/* Section label */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="flex items-center gap-3 mb-6"
+      >
+        <div className="h-10 w-1 bg-gradient-to-b from-primary to-primary/40 rounded-full" />
+        <div>
+          <h2 className="text-2xl font-extrabold tracking-tight">À la une</h2>
+          <p className="text-sm text-muted-foreground mt-0.5">Les informations essentielles du jour</p>
+        </div>
+      </motion.div>
 
-            {/* Content */}
-            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 text-white">
-              <div className="flex items-center gap-2 mb-3">
-                <Badge className={`${categoryColors[mainArticle.category]} border-0 text-[11px] font-bold px-3 py-1`}>
+      {/* ── MAIN HERO: Full-width featured article ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
+        className="relative group cursor-pointer mb-5"
+        onClick={() => onArticleClick(mainArticle.id)}
+      >
+        <div className="relative w-full aspect-[16/9] sm:aspect-[2/1] lg:aspect-[21/9] overflow-hidden rounded-2xl shadow-2xl shadow-black/10 dark:shadow-black/30">
+          <Image
+            src="/img/hero-dakar.jpg"
+            alt={mainArticle.title}
+            fill
+            className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+            priority
+            sizes="100vw"
+          />
+
+          {/* Rich gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/5" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent" />
+
+          {/* Content - bottom left */}
+          <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-8 lg:p-10">
+            <div className="max-w-3xl">
+              <div className="flex items-center gap-2.5 mb-3">
+                <Badge className={`${categoryColors[mainArticle.category]} border-0 text-[11px] font-bold px-3 py-1 shadow-sm`}>
                   {mainArticle.category}
                 </Badge>
-                <span className="text-[11px] text-white/50 font-medium">• À la une</span>
+                <Badge variant="outline" className="border-white/25 text-white/80 text-[10px] font-semibold px-2.5 py-0.5 backdrop-blur-sm bg-white/5">
+                  À LA UNE
+                </Badge>
               </div>
-              <h1 className="text-2xl sm:text-3xl lg:text-[2rem] xl:text-4xl font-extrabold leading-[1.15] mb-3 max-w-2xl">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl xl:text-[2.5rem] font-black leading-[1.12] mb-3 text-white">
                 {mainArticle.title}
               </h1>
-              <p className="text-sm sm:text-[15px] text-white/75 line-clamp-2 mb-4 max-w-xl font-light leading-relaxed">
+              <p className="text-sm sm:text-[15px] text-white/70 line-clamp-2 mb-4 max-w-2xl font-light leading-relaxed hidden sm:block">
                 {mainArticle.excerpt}
               </p>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4 text-xs text-white/50">
-                  <span className="flex items-center gap-1.5">
-                    <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
-                      <User className="h-3 w-3" />
-                    </div>
-                    <span className="font-medium text-white/70">{mainArticle.author.name}</span>
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Calendar className="h-3 w-3" />
-                    {new Date(mainArticle.date).toLocaleDateString('fr-FR', {
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric',
-                    })}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Clock className="h-3 w-3" />
-                    {mainArticle.readTime} min
-                  </span>
-                </div>
-                <ArrowRight className="h-5 w-5 text-white/50 group-hover:text-white group-hover:translate-x-1 transition-all" />
+              <div className="flex items-center gap-5 text-xs text-white/50">
+                <span className="flex items-center gap-1.5">
+                  <div className="w-6 h-6 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center">
+                    <User className="h-3 w-3" />
+                  </div>
+                  <span className="font-medium text-white/70">{mainArticle.author.name}</span>
+                </span>
+                <span className="flex items-center gap-1 hidden sm:flex">
+                  <Calendar className="h-3 w-3" />
+                  {new Date(mainArticle.date).toLocaleDateString('fr-FR', {
+                    day: 'numeric',
+                    month: 'long',
+                  })}
+                </span>
+                <span className="flex items-center gap-1 hidden sm:flex">
+                  <Clock className="h-3 w-3" />
+                  {mainArticle.readTime} min
+                </span>
               </div>
             </div>
-          </div>
-        </motion.div>
 
-        {/* Secondary articles */}
-        <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
-          {secondaryArticles.map((article, index) => (
-            <motion.div
-              key={article.id}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 * (index + 1), ease: 'easeOut' }}
-              className="group cursor-pointer"
-              onClick={() => onArticleClick(article.id)}
-            >
-              <div className="flex gap-4 items-start bg-card rounded-2xl p-3 border border-border/50 hover:shadow-xl hover:shadow-black/5 dark:hover:shadow-black/20 hover:border-primary/20 transition-all duration-300 h-full relative overflow-hidden">
-                {/* Subtle accent on hover */}
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="relative flex-shrink-0 w-[100px] h-[90px] sm:w-[120px] sm:h-[100px] overflow-hidden rounded-xl">
-                  <Image
-                    src={article.image}
-                    alt={article.title}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-110"
-                    sizes="120px"
-                  />
-                </div>
-                <div className="relative flex flex-col justify-between py-0.5 min-w-0 flex-1">
-                  <div>
-                    <Badge
-                      variant="secondary"
-                      className="mb-2 text-[10px] font-bold px-2 py-0 h-5"
-                    >
-                      {article.category}
-                    </Badge>
-                    <h3 className="font-bold text-sm leading-snug line-clamp-2 group-hover:text-primary transition-colors">
-                      {article.title}
-                    </h3>
-                  </div>
-                  <div className="flex items-center gap-2 text-[11px] text-muted-foreground mt-2">
-                    <User className="h-3 w-3" />
-                    <span className="font-medium">{article.author.name}</span>
-                    <span className="text-border">·</span>
-                    <span>
-                      {new Date(article.date).toLocaleDateString('fr-FR', {
-                        day: 'numeric',
-                        month: 'short',
-                      })}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          ))}
+            {/* Read arrow */}
+            <div className="absolute bottom-8 right-8 lg:bottom-10 lg:right-10 h-10 w-10 rounded-full bg-white/10 backdrop-blur-sm border border-white/15 flex items-center justify-center opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+              <ArrowRight className="h-4 w-4 text-white" />
+            </div>
+          </div>
         </div>
+      </motion.div>
+
+      {/* ── SECONDARY ARTICLES: 3-column image grid ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {secondaryArticles.map((article, index) => (
+          <motion.article
+            key={article.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.15 * (index + 1), ease: 'easeOut' }}
+            className="group cursor-pointer"
+            onClick={() => onArticleClick(article.id)}
+          >
+            <div className="relative aspect-[16/10] overflow-hidden rounded-2xl shadow-lg shadow-black/5 dark:shadow-black/20 mb-3">
+              <Image
+                src={article.image}
+                alt={article.title}
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                sizes="(max-width: 640px) 100vw, 33vw"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              <div className="absolute top-3 left-3">
+                <Badge className={`${categoryColors[article.category]} border-0 text-[10px] font-bold px-2.5 py-0.5 shadow-sm`}>
+                  {article.category}
+                </Badge>
+              </div>
+              <div className="absolute bottom-3 right-3 h-7 w-7 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+                <ArrowRight className="h-3.5 w-3.5 text-white" />
+              </div>
+            </div>
+            <h3 className="font-bold text-[15px] leading-snug line-clamp-2 group-hover:text-primary transition-colors mb-2">
+              {article.title}
+            </h3>
+            <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+              <User className="h-3 w-3" />
+              <span className="font-medium">{article.author.name}</span>
+              <span className="text-border">·</span>
+              <span>
+                {new Date(article.date).toLocaleDateString('fr-FR', {
+                  day: 'numeric',
+                  month: 'short',
+                })}
+              </span>
+              <span className="text-border">·</span>
+              <span className="flex items-center gap-0.5">
+                <Clock className="h-3 w-3" />
+                {article.readTime} min
+              </span>
+            </div>
+          </motion.article>
+        ))}
       </div>
     </section>
   );
