@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   Cloud,
@@ -448,10 +448,12 @@ export function WeatherWidget() {
 
 // ─── EXCHANGE RATE WIDGET ────────────────────────────────────────────
 export function ExchangeRateWidget() {
-  const [lastUpdate] = useState(() => {
+  const [lastUpdate, setLastUpdate] = useState('--:--');
+
+  useEffect(() => {
     const now = new Date();
-    return now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-  });
+    setLastUpdate(now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }));
+  }, []);
 
   return (
     <Card className="border-border/60 overflow-hidden rounded-2xl shadow-sm">
