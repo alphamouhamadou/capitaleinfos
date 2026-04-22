@@ -91,3 +91,44 @@ Stage Summary:
 - All animations use cubic-bezier(0.22, 1, 0.36, 1) for premium easing
 - "Technologie" completely removed from navigation, categories, and footer
 - Consistent design language across all 12 components
+
+---
+Task ID: 5
+Agent: Main Agent
+Task: Build complete Admin Panel for Capitale Infos
+
+Work Log:
+- Installed bcryptjs + @types/bcryptjs for password hashing
+- Updated Prisma schema: replaced User/Post with Admin (email, password, name, role) and Article (20 fields including category, authorName, authorRole, image, readTime, isFeatured, isTrending, published)
+- Created prisma/seed.ts: seeds default admin (admin@capitaleinfos.sn / Admin@2026) + all 20 articles from static data
+- Ran prisma db push --force-reset, prisma generate, tsx seed successfully
+- Created src/lib/auth.ts: NextAuth v4 config with CredentialsProvider, JWT strategy, custom callbacks for id/role in token/session
+- Created src/app/api/auth/[...nextauth]/route.ts: NextAuth handler
+- Created 6 admin API routes:
+  - POST /api/admin/auth/login - credential validation with bcrypt
+  - GET/POST /api/admin/articles - list (with category/published/search filters) + create (Zod validation)
+  - GET/PUT/DELETE /api/admin/articles/[id] - read, update, delete individual articles
+  - GET /api/admin/stats - total/published/draft counts, category distribution, 5 most recent articles
+  - PUT /api/admin/profile - update name and/or password (with current password verification)
+- Created src/lib/admin-auth.ts: requireAdmin() helper for server-side auth checks
+- Built admin login page (/admin/login): gradient background, logo, email+password form, eye toggle, French error messages, session-aware
+- Built admin layout (/admin/layout.tsx): responsive sidebar with 3 nav items (Tableau de bord, Articles, Paramètres), logo, user info, logout, mobile sheet menu, top bar with breadcrumbs, SessionProvider wrapper, auth protection redirect
+- Built admin dashboard (/admin): 4 stat cards (total, published, draft, categories), recent articles table, category distribution panel, quick action buttons
+- Built admin articles list (/admin/articles): full table with search bar, category filter dropdown, status filter, edit/delete dropdown menus, delete confirmation dialog
+- Built admin article create form (/admin/articles/new): 2-column layout (content + sidebar), title/excerpt/content textarea, category select, publishing toggles (published/featured/trending), author fields, image URL, read time
+- Built admin article edit form (/admin/articles/[id]/edit): same form pre-filled with fetched article data
+- Built admin settings page (/admin/settings): profile name update, password change (current + new + confirm), success indicators
+- Created src/components/admin/article-form.tsx: reusable article form component used by both create and edit pages
+- All admin pages wrapped in SessionProvider via admin layout (not root layout, to avoid interfering with public site)
+- Build verified: npx next build succeeds with 0 errors, all 13 pages generated
+
+Stage Summary:
+- Complete admin panel built with 7 pages and 6 API routes
+- Authentication: NextAuth v4 credentials provider with bcrypt password hashing
+- Database: SQLite with Prisma ORM, seeded with 1 admin + 20 articles
+- Default credentials: admin@capitaleinfos.sn / Admin@2026
+- All admin UI text in French
+- Senegal-themed design (red primary, amber/gold accents) matching public site
+- Responsive layout with collapsible sidebar on mobile
+- Full CRUD operations for articles with Zod validation
+- Public website remains completely unaffected
