@@ -1,15 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import {
   Menu,
   Search,
   Sun,
   Moon,
+  X,
+  TrendingUp,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTitle, SheetOverlay } from '@/components/ui/sheet';
 
 const navLinks = [
   { label: 'À la une', href: '#' },
@@ -27,115 +29,218 @@ interface HeaderProps {
 }
 
 export function Header({ onSearchOpen }: HeaderProps) {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [currentTime, setCurrentTime] = useState('');
 
-  const currentDate = 'Mardi 22 Avril 2026';
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      setCurrentTime(
+        now.toLocaleDateString('fr-FR', {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        })
+      );
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleNavClick = (href: string) => {
+    setMobileOpen(false);
+    if (href !== '#') {
+      const el = document.querySelector(href);
+      el?.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const isDark = resolvedTheme === 'dark';
 
   return (
-    <header className="sticky top-0 z-50 w-full border-t-[3px] border-primary bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Top bar */}
-        <div className="flex items-center justify-between border-b border-border py-1.5 text-xs text-muted-foreground">
-          <span className="hidden sm:block">{currentDate}</span>
-          <span className="sm:hidden">22/04/2026</span>
-          <div className="flex items-center gap-1">
+    <>
+      {/* Top accent bar */}
+      <div className="h-[3px] bg-gradient-to-r from-primary via-red-600 to-amber-500" />
+
+      <header
+        className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+          scrolled
+            ? 'bg-background/95 backdrop-blur-lg shadow-lg shadow-black/5 dark:shadow-black/20'
+            : 'bg-background/80 backdrop-blur-md'
+        }`}
+      >
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          {/* Top bar */}
+          <div className="flex items-center justify-between border-b border-border/50 py-1.5 text-xs text-muted-foreground">
+            <span className="hidden sm:block capitalize">{currentTime}</span>
+            <span className="sm:hidden text-[11px]">22 Avril 2026</span>
+            <div className="flex items-center gap-1">
+              <div className="hidden sm:flex items-center gap-1.5 mr-3 text-[11px]">
+                <TrendingUp className="h-3 w-3 text-primary" />
+                <span className="font-medium">Dakar 32°C</span>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-full hover:bg-primary/10"
+                onClick={onSearchOpen}
+                aria-label="Rechercher"
+              >
+                <Search className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-full hover:bg-primary/10"
+                onClick={() => setTheme(isDark ? 'light' : 'dark')}
+                aria-label="Changer de thème"
+              >
+                {isDark ? (
+                  <Sun className="h-4 w-4 text-amber-400" />
+                ) : (
+                  <Moon className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
+          </div>
+
+          {/* Logo + Navigation */}
+          <div className="flex h-16 items-center justify-between">
+            <a href="#" className="flex items-center gap-3 group">
+              <div className="relative h-11 w-11 rounded-xl overflow-hidden ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all">
+                <img
+                  src="/img/logo.png"
+                  alt="Capitale Infos"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xl font-black tracking-tight leading-none text-foreground">
+                  CAPITALE<span className="text-primary"> INFOS</span>
+                </span>
+                <span className="text-[9px] font-semibold uppercase tracking-[0.2em] text-muted-foreground mt-0.5">
+                  Le Journal du Sénégal
+                </span>
+              </div>
+            </a>
+
+            {/* Desktop nav */}
+            <nav className="hidden lg:flex items-center gap-0.5" aria-label="Navigation principale">
+              {navLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavClick(link.href);
+                  }}
+                  className="relative px-3 py-2 text-[13px] font-semibold text-muted-foreground transition-colors hover:text-foreground rounded-lg hover:bg-primary/5 group"
+                >
+                  {link.label}
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-primary rounded-full transition-all duration-300 group-hover:w-6" />
+                </a>
+              ))}
+            </nav>
+
+            {/* Mobile menu button */}
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8"
-              onClick={onSearchOpen}
-              aria-label="Rechercher"
+              className="lg:hidden h-10 w-10 rounded-xl hover:bg-primary/10"
+              onClick={() => setMobileOpen(true)}
+              aria-label="Ouvrir le menu"
             >
-              <Search className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              aria-label="Changer de thème"
-            >
-              <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+              <Menu className="h-5 w-5" />
             </Button>
           </div>
         </div>
 
-        {/* Logo + Navigation */}
-        <div className="flex h-16 items-center justify-between">
-          <a href="#" className="flex items-center gap-3">
-            <img
-              src="/img/logo.png"
-              alt="Capitale Infos"
-              className="h-10 w-10 rounded-full"
-            />
-            <div className="flex flex-col">
-              <span className="text-xl font-black tracking-tight leading-tight text-foreground">
-                CAPITALE INFOS
-              </span>
-              <span className="text-[10px] font-medium uppercase tracking-widest text-primary">
-                Le Journal du Sénégal
-              </span>
-            </div>
-          </a>
+        {/* Mobile menu - higher z-index than header */}
+        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+          <SheetOverlay className="z-[60]" />
+          <SheetContent side="right" className="z-[70] w-80 p-0">
+            <SheetTitle className="sr-only">Navigation</SheetTitle>
 
-          {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-1" aria-label="Navigation principale">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary rounded-md hover:bg-primary/5"
-              >
-                {link.label}
-              </a>
-            ))}
-          </nav>
-
-          {/* Mobile menu */}
-          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-            <SheetTrigger asChild className="lg:hidden">
-              <Button variant="ghost" size="icon" aria-label="Menu">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-72">
-              <SheetTitle className="sr-only">Navigation</SheetTitle>
-              <div className="flex flex-col gap-6 pt-8">
-                <div className="flex items-center gap-3">
-                  <img
-                    src="/img/logo.png"
-                    alt="Capitale Infos"
-                    className="h-10 w-10 rounded-full"
-                  />
+            {/* Mobile menu header */}
+            <div className="relative bg-gradient-to-br from-primary to-primary/90 px-6 py-8 text-white">
+              <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/4" />
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/4" />
+              <div className="relative">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="h-12 w-12 rounded-xl overflow-hidden ring-2 ring-white/30">
+                    <img
+                      src="/img/logo.png"
+                      alt="Capitale Infos"
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
                   <div>
                     <p className="text-lg font-black tracking-tight">CAPITALE INFOS</p>
-                    <p className="text-xs text-primary font-medium uppercase tracking-widest">
+                    <p className="text-[10px] font-semibold uppercase tracking-widest text-white/70">
                       Le Journal du Sénégal
                     </p>
                   </div>
                 </div>
-                <nav className="flex flex-col gap-1" aria-label="Navigation mobile">
-                  {navLinks.map((link) => (
-                    <a
-                      key={link.href}
-                      href={link.href}
-                      onClick={() => setMobileOpen(false)}
-                      className="px-3 py-2.5 text-base font-medium text-foreground hover:text-primary transition-colors rounded-md hover:bg-primary/5"
-                    >
-                      {link.label}
-                    </a>
-                  ))}
-                </nav>
-                <div className="border-t border-border pt-4">
-                  <p className="text-sm text-muted-foreground">{currentDate}</p>
-                </div>
+                <p className="text-sm text-white/70 capitalize">{currentTime}</p>
               </div>
-            </SheetContent>
-          </Sheet>
-        </div>
-      </div>
-    </header>
+            </div>
+
+            {/* Mobile menu links */}
+            <nav className="flex flex-col px-3 py-4" aria-label="Navigation mobile">
+              {navLinks.map((link, index) => (
+                <button
+                  key={link.href}
+                  onClick={() => handleNavClick(link.href)}
+                  className="flex items-center gap-3 px-4 py-3 text-[15px] font-medium text-foreground hover:text-primary transition-all rounded-xl hover:bg-primary/5 group"
+                >
+                  <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-xs font-bold text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  {link.label}
+                </button>
+              ))}
+            </nav>
+
+            {/* Mobile menu footer */}
+            <div className="absolute bottom-0 left-0 right-0 px-6 py-4 border-t border-border bg-card">
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 rounded-full hover:bg-primary/10"
+                  onClick={onSearchOpen}
+                >
+                  <Search className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 rounded-full hover:bg-primary/10"
+                  onClick={() => setTheme(isDark ? 'light' : 'dark')}
+                >
+                  {isDark ? (
+                    <Sun className="h-4 w-4 text-amber-400" />
+                  ) : (
+                    <Moon className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
+      </header>
+    </>
   );
 }

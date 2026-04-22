@@ -1,10 +1,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Quote, ChevronRight } from 'lucide-react';
+import { Quote, ArrowRight } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { articles, type Article } from '@/lib/data';
 
 interface OpinionSectionProps {
@@ -17,17 +16,21 @@ const opinionArticles: Article[] = articles.filter(
 ).slice(0, 3);
 
 const avatarColors = [
-  'bg-primary text-primary-foreground',
-  'bg-amber-600 text-white',
-  'bg-emerald-600 text-white',
+  'bg-gradient-to-br from-primary to-red-600 text-white',
+  'bg-gradient-to-br from-amber-500 to-orange-600 text-white',
+  'bg-gradient-to-br from-emerald-500 to-teal-600 text-white',
 ];
 
 export function OpinionSection({ onArticleClick }: OpinionSectionProps) {
   return (
-    <section className="py-8">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold">Opinions</h2>
-        <div className="h-1 w-16 bg-primary rounded-full mt-2" />
+    <section className="py-10">
+      {/* Section header */}
+      <div className="flex items-center gap-3 mb-8">
+        <div className="h-10 w-1 bg-gradient-to-b from-primary to-primary/40 rounded-full" />
+        <div>
+          <h2 className="text-2xl font-extrabold tracking-tight">Opinions</h2>
+          <p className="text-sm text-muted-foreground mt-0.5">Éditoriaux et tribunes de nos analystes</p>
+        </div>
       </div>
 
       <div className="space-y-4">
@@ -36,18 +39,18 @@ export function OpinionSection({ onArticleClick }: OpinionSectionProps) {
             key={article.id}
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 0.4, delay: index * 0.15 }}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ duration: 0.4, delay: index * 0.12, ease: 'easeOut' }}
           >
             <Card
-              className="group cursor-pointer border-l-4 border-l-primary hover:shadow-lg transition-all duration-300 bg-card"
+              className="group cursor-pointer border border-border/60 hover:shadow-xl hover:shadow-black/5 dark:hover:shadow-black/20 hover:border-primary/20 transition-all duration-300 bg-card rounded-2xl overflow-hidden"
               onClick={() => onArticleClick(article.id)}
             >
               <CardContent className="p-5">
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0">
-                    <Avatar className="h-12 w-12">
-                      <AvatarFallback className={avatarColors[index % avatarColors.length]}>
+                    <Avatar className="h-12 w-12 ring-2 ring-primary/10 shadow-sm">
+                      <AvatarFallback className={`${avatarColors[index % avatarColors.length]} text-sm font-bold`}>
                         {article.author.name
                           .split(' ')
                           .map((n) => n[0])
@@ -57,22 +60,24 @@ export function OpinionSection({ onArticleClick }: OpinionSectionProps) {
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <Quote className="h-4 w-4 text-primary flex-shrink-0" />
-                      <span className="text-xs font-semibold text-primary uppercase tracking-wide">
+                      <div className="h-5 w-5 rounded bg-primary/10 flex items-center justify-center">
+                        <Quote className="h-3 w-3 text-primary" />
+                      </div>
+                      <span className="text-[10px] font-bold text-primary uppercase tracking-widest">
                         {article.category === 'Politique' ? 'Éditorial' : 'Tribune'}
                       </span>
                     </div>
-                    <h3 className="font-bold text-base leading-snug mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                    <h3 className="font-bold text-[15px] leading-snug mb-2 group-hover:text-primary transition-colors line-clamp-2">
                       {article.title}
                     </h3>
-                    <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
+                    <p className="text-sm text-muted-foreground line-clamp-2 mb-3 leading-relaxed">
                       {article.excerpt}
                     </p>
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-medium text-muted-foreground">
                         {article.author.name} — {article.author.role}
                       </span>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 group-hover:text-primary group-hover:translate-x-1 transition-all duration-300" />
                     </div>
                   </div>
                 </div>

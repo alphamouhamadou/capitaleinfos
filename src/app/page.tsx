@@ -34,7 +34,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background">
       <Header onSearchOpen={() => setSearchOpen(true)} />
       <BreakingNews />
 
@@ -42,13 +42,13 @@ export default function Home() {
         <HeroSection onArticleClick={handleArticleClick} />
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div className="lg:col-span-8">
               <LatestNews onArticleClick={handleArticleClick} />
               <CategorySection onArticleClick={handleArticleClick} />
               <OpinionSection onArticleClick={handleArticleClick} />
             </div>
-            <div className="lg:col-span-1">
+            <div className="lg:col-span-4">
               <TrendingSidebar onArticleClick={handleArticleClick} />
             </div>
           </div>
