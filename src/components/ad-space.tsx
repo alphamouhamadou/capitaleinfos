@@ -1,189 +1,190 @@
 'use client';
 
+import Image from 'next/image';
 import { useState } from 'react';
-import { Megaphone, Info } from 'lucide-react';
+import { Info } from 'lucide-react';
 
-interface AdSpaceProps {
-  format: 'leaderboard' | 'rectangle' | 'banner' | 'half-page' | 'mobile-banner';
-  label?: string;
-  className?: string;
+interface AdBanner {
+  id: string;
+  image: string;
+  alt: string;
+  advertiser: string;
+  link: string;
 }
 
-const formatConfig = {
-  leaderboard: {
-    width: '100%',
-    maxWidth: '728px',
-    height: '90px',
-    label: 'Bannière 728x90',
-    mobile: 'mobile-banner',
-  },
-  rectangle: {
-    width: '100%',
-    maxWidth: '300px',
-    height: '250px',
-    label: 'Rectangle 300x250',
-    mobile: 'rectangle',
-  },
-  banner: {
-    width: '100%',
-    maxWidth: '728px',
-    height: '120px',
-    label: 'Bannière 728x120',
-    mobile: 'mobile-banner',
-  },
-  'half-page': {
-    width: '100%',
-    maxWidth: '300px',
-    height: '600px',
-    label: 'Demi-page 300x600',
-    mobile: 'rectangle',
-  },
-  'mobile-banner': {
-    width: '100%',
-    maxWidth: '320px',
-    height: '50px',
-    label: 'Mobile 320x50',
-    mobile: 'mobile-banner',
-  },
-};
-
-const sampleAds = [
+// ─── AD INVENTORY ────────────────────────────────────────────────────
+const leaderboardAds: AdBanner[] = [
   {
-    bg: 'from-emerald-500 to-teal-600',
-    icon: '🏦',
-    title: 'BCEAO',
-    subtitle: 'Votre partenaire financier de confiance',
+    id: 'leader-1',
+    image: '/img/ads/ad-dakar-city.png',
+    alt: 'Capitale Infos - Ville de Dakar',
+    advertiser: 'Dakar Smart City',
+    link: '#',
   },
   {
-    bg: 'from-red-600 to-red-700',
-    icon: '📱',
-    title: 'Orange Sonatel',
-    subtitle: 'La meilleure connexion internet du Sénégal',
+    id: 'leader-2',
+    image: '/img/ads/ad-telecom.png',
+    alt: 'Orange Sonatel - Télécommunications',
+    advertiser: 'Orange Sonatel',
+    link: '#',
   },
   {
-    bg: 'from-blue-600 to-indigo-700',
-    icon: '✈️',
-    title: 'Air Sénégal',
-    subtitle: 'Vol direct Dakar-Paris dès 250 000 FCFA',
+    id: 'leader-3',
+    image: '/img/ads/ad-airline.png',
+    alt: 'Air Sénégal - Vol Dakar-Paris',
+    advertiser: 'Air Sénégal',
+    link: '#',
   },
   {
-    bg: 'from-amber-500 to-orange-600',
-    icon: '🏠',
-    title: 'Immobilier SN',
-    subtitle: 'Trouvez votre maison idéale au Sénégal',
-  },
-  {
-    bg: 'from-purple-600 to-violet-700',
-    icon: '🎓',
-    title: 'Université Cheikh Anta Diop',
-    subtitle: 'Inscriptions ouvertes pour la rentrée 2026',
-  },
-  {
-    bg: 'from-rose-500 to-pink-600',
-    icon: '🚗',
-    title: 'Toyota Sénégal',
-    subtitle: 'Nouveau Land Cruiser 2026 - Disponible maintenant',
+    id: 'leader-4',
+    image: '/img/ads/ad-banking.png',
+    alt: 'BCEAO - Banque Centrale',
+    advertiser: 'BCEAO',
+    link: '#',
   },
 ];
 
-function getAdContent(format: string) {
-  // Deterministic "random" based on format string
-  const index = format.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) % sampleAds.length;
-  return sampleAds[index];
+const rectangleAds: AdBanner[] = [
+  {
+    id: 'rect-1',
+    image: '/img/ads/ad-education.png',
+    alt: 'UCAD - Université Cheikh Anta Diop',
+    advertiser: 'Université Cheikh Anta Diop',
+    link: '#',
+  },
+  {
+    id: 'rect-2',
+    image: '/img/ads/ad-auto.png',
+    alt: 'Toyota Sénégal',
+    advertiser: 'Toyota Sénégal',
+    link: '#',
+  },
+];
+
+const mobileAds: AdBanner[] = [
+  {
+    id: 'mobile-1',
+    image: '/img/ads/ad-immobilier.png',
+    alt: 'Immobilier SN',
+    advertiser: 'Immobilier SN',
+    link: '#',
+  },
+  {
+    id: 'mobile-2',
+    image: '/img/ads/ad-banking.png',
+    alt: 'BCEAO - Banque Centrale',
+    advertiser: 'BCEAO',
+    link: '#',
+  },
+];
+
+// ─── AD SPACE COMPONENT ──────────────────────────────────────────────
+interface AdSpaceProps {
+  format: 'leaderboard' | 'rectangle' | 'half-page' | 'mobile-banner';
+  position?: number;
+  className?: string;
 }
 
-export function AdSpace({ format, label, className = '' }: AdSpaceProps) {
+export function AdSpace({ format, position = 0, className = '' }: AdSpaceProps) {
   const [dismissed, setDismissed] = useState(false);
-  const config = formatConfig[format];
-  const ad = getAdContent(format);
-  const isMobileFormat = format === 'mobile-banner';
+
+  const ads = format === 'rectangle' || format === 'half-page'
+    ? rectangleAds
+    : format === 'mobile-banner'
+      ? mobileAds
+      : leaderboardAds;
+
+  const ad = ads[position % ads.length];
 
   if (dismissed) return null;
 
-  return (
-    <div
-      className={`relative w-full flex justify-center ${isMobileFormat ? 'lg:hidden' : ''} ${className}`}
-    >
-      <div
-        className="relative w-full overflow-hidden rounded-xl border border-border/60 shadow-sm group cursor-pointer transition-all hover:shadow-md"
-        style={{
-          maxWidth: config.maxWidth,
-          height: config.height,
-          minHeight: config.height,
-        }}
-      >
-        {/* Ad content */}
-        <div className={`absolute inset-0 bg-gradient-to-r ${ad.bg} flex items-center justify-center`}>
-          {/* Decorative elements */}
-          <div className="absolute top-0 right-0 w-1/3 h-full bg-white/5" />
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full -translate-x-1/2 translate-y-1/2" />
-          <div className="absolute top-2 right-2 w-16 h-16 bg-white/5 rounded-full" />
+  const isMobile = format === 'mobile-banner';
+  const isVertical = format === 'rectangle' || format === 'half-page';
 
-          {/* Content */}
-          <div className="relative flex items-center gap-4 px-6">
-            <span className={`text-4xl ${isMobileFormat ? 'text-2xl' : 'text-5xl'} drop-shadow-lg`}>
-              {ad.icon}
+  const wrapperClass = isMobile
+    ? 'lg:hidden'
+    : '';
+
+  const sizeClass = isVertical
+    ? 'aspect-[9/16]'
+    : 'aspect-[4/3] sm:aspect-[16/9]';
+
+  const maxHeightClass = format === 'half-page'
+    ? 'max-h-[600px]'
+    : isVertical
+      ? 'max-h-[400px]'
+      : 'max-h-[200px] sm:max-h-[250px]';
+
+  return (
+    <div className={`relative w-full flex justify-center ${wrapperClass} ${className}`}>
+      <a
+        href={ad.link}
+        target="_blank"
+        rel="noopener noreferrer sponsored"
+        className="relative w-full overflow-hidden rounded-xl border border-border/40 shadow-sm hover:shadow-md transition-shadow group block"
+      >
+        <div className={`relative w-full ${sizeClass} ${maxHeightClass}`}>
+          <Image
+            src={ad.image}
+            alt={ad.alt}
+            fill
+            className="object-cover w-full h-full group-hover:scale-[1.02] transition-transform duration-500"
+            sizes={isVertical ? '300px' : '(max-width: 640px) 100vw, 728px'}
+            priority={position === 0}
+          />
+
+          {/* Gradient overlay for advertiser name */}
+          <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-black/40 to-transparent flex items-center px-2.5">
+            <span className="text-[9px] text-white/80 font-semibold uppercase tracking-wider">
+              {ad.advertiser}
             </span>
-            <div className="text-white">
-              <p className={`font-black tracking-tight ${isMobileFormat ? 'text-sm' : 'text-lg sm:text-xl'}`}>
-                {ad.title}
-              </p>
-              {!isMobileFormat && (
-                <p className="text-white/80 text-xs sm:text-sm mt-0.5 font-medium">{ad.subtitle}</p>
-              )}
-            </div>
           </div>
 
-          {/* CTA button (desktop only) */}
-          {!isMobileFormat && (
-            <div className="absolute bottom-3 right-4">
-              <div className="bg-white/20 backdrop-blur-sm text-white text-[11px] font-bold px-4 py-1.5 rounded-lg hover:bg-white/30 transition-colors">
-                En savoir plus
-              </div>
+          {/* Publicité label */}
+          <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-black/40 to-transparent flex items-center justify-between px-2.5">
+            <div className="flex items-center gap-1">
+              <Info className="h-2.5 w-2.5 text-white/50" />
+              <span className="text-[8px] text-white/50 font-medium uppercase tracking-wider">
+                Publicité
+              </span>
             </div>
-          )}
+          </div>
         </div>
 
         {/* Close button */}
         <button
           onClick={(e) => {
+            e.preventDefault();
             e.stopPropagation();
             setDismissed(true);
           }}
-          className="absolute top-1.5 right-1.5 h-6 w-6 rounded-md bg-black/20 hover:bg-black/40 text-white/70 hover:text-white flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"
+          className="absolute top-1.5 right-1.5 h-6 w-6 rounded-md bg-black/30 hover:bg-black/60 text-white/70 hover:text-white flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 backdrop-blur-sm"
           aria-label="Fermer la publicité"
         >
-          <span className="text-xs font-bold">&times;</span>
+          <span className="text-xs font-bold leading-none">&times;</span>
         </button>
-
-        {/* Ad label */}
-        <div className="absolute bottom-1.5 left-2 flex items-center gap-1">
-          <Info className="h-2.5 w-2.5 text-white/30" />
-          <span className="text-[8px] text-white/30 font-medium uppercase tracking-wider">
-            Publicité
-          </span>
-        </div>
-      </div>
+      </a>
     </div>
   );
 }
 
-// ─── SIDEBAR AD COMPONENT ────────────────────────────────────────────
-export function SidebarAd({ className = '' }: { className?: string }) {
-  return <AdSpace format="rectangle" className={className} />;
-}
-
-// ─── IN-CONTENT AD COMPONENT ─────────────────────────────────────────
-export function InContentAd({ className = '' }: { className?: string }) {
-  return <AdSpace format="banner" className={className} />;
-}
-
-// ─── TOP BANNER AD COMPONENT ─────────────────────────────────────────
+// ─── PRESET COMPONENTS ───────────────────────────────────────────────
 export function TopBannerAd({ className = '' }: { className?: string }) {
-  return <AdSpace format="leaderboard" className={className} />;
+  return <AdSpace format="leaderboard" position={0} className={className} />;
 }
 
-// ─── MOBILE STICKY AD ────────────────────────────────────────────────
+export function MidBannerAd({ className = '' }: { className?: string }) {
+  return <AdSpace format="leaderboard" position={1} className={className} />;
+}
+
+export function BottomBannerAd({ className = '' }: { className?: string }) {
+  return <AdSpace format="leaderboard" position={2} className={className} />;
+}
+
+export function SidebarAd({ position = 0, className = '' }: { position?: number; className?: string }) {
+  return <AdSpace format="rectangle" position={position} className={className} />;
+}
+
 export function MobileStickyAd() {
   const [visible, setVisible] = useState(true);
 
@@ -191,13 +192,18 @@ export function MobileStickyAd() {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden">
-      <AdSpace format="mobile-banner" />
-      <button
-        onClick={() => setVisible(false)}
-        className="absolute -top-6 right-3 bg-foreground/80 text-background text-[10px] font-bold px-2 py-0.5 rounded-t-md hover:bg-foreground transition-colors"
-      >
-        Fermer
-      </button>
+      <div className="relative">
+        <div className="absolute -top-6 right-3 z-10">
+          <button
+            onClick={() => setVisible(false)}
+            className="bg-foreground/80 text-background text-[10px] font-bold px-2.5 py-1 rounded-t-md hover:bg-foreground transition-colors flex items-center gap-1"
+          >
+            Fermer
+            <span className="text-xs">&times;</span>
+          </button>
+        </div>
+        <AdSpace format="mobile-banner" position={1} />
+      </div>
     </div>
   );
 }

@@ -13,7 +13,13 @@ import { NewsletterSection } from '@/components/newsletter-section';
 import { Footer } from '@/components/footer';
 import { ArticleDialog } from '@/components/article-dialog';
 import { SearchDialog } from '@/components/search-dialog';
-import { TopBannerAd, InContentAd, MobileStickyAd } from '@/components/ad-space';
+import {
+  TopBannerAd,
+  MidBannerAd,
+  BottomBannerAd,
+  SidebarAd,
+  MobileStickyAd,
+} from '@/components/ad-space';
 
 export default function Home() {
   const [selectedArticleId, setSelectedArticleId] = useState<string | null>(null);
@@ -54,16 +60,16 @@ export default function Home() {
             <div className="lg:col-span-8">
               <LatestNews onArticleClick={handleArticleClick} />
 
-              {/* ── IN-CONTENT AD (between Latest News & Categories) ── */}
+              {/* ── MID CONTENT AD 1 ── */}
               <div className="py-4">
-                <InContentAd />
+                <MidBannerAd />
               </div>
 
               <CategorySection onArticleClick={handleArticleClick} />
 
-              {/* ── IN-CONTENT AD (between Categories & Opinions) ── */}
+              {/* ── MID CONTENT AD 2 ── */}
               <div className="py-4">
-                <InContentAd />
+                <BottomBannerAd />
               </div>
 
               <OpinionSection onArticleClick={handleArticleClick} />
@@ -73,8 +79,16 @@ export default function Home() {
             <div className="lg:col-span-4">
               <div className="lg:sticky lg:top-24 space-y-6">
                 <TrendingSidebar onArticleClick={handleArticleClick} />
+
+                {/* ── SIDEBAR AD ── */}
+                <SidebarAd position={0} />
+
                 <WeatherWidget />
                 <ExchangeRateWidget />
+
+                {/* ── SIDEBAR AD 2 ── */}
+                <SidebarAd position={1} />
+
                 <PrayerTimesWidget />
               </div>
             </div>
@@ -82,17 +96,13 @@ export default function Home() {
         </div>
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          {/* ── BOTTOM BANNER AD (before newsletter) ── */}
-          <div className="py-6">
-            <TopBannerAd />
-          </div>
           <NewsletterSection />
         </div>
       </main>
 
       <Footer />
 
-      {/* ── MOBILE STICKY AD (bottom bar) ── */}
+      {/* ── MOBILE STICKY AD ── */}
       <MobileStickyAd />
 
       <ArticleDialog
