@@ -24,7 +24,8 @@ export type Category =
   | "Culture"
   | "Société"
   | "International"
-  | "Environnement";
+  | "Environnement"
+  |  "Justice";
 
 export const categories: Category[] = [
   "Politique",
@@ -34,6 +35,7 @@ export const categories: Category[] = [
   "Société",
   "International",
   "Environnement",
+  "Justice",
 ];
 
 export const categoryColors: Record<Category, string> = {
@@ -44,6 +46,7 @@ export const categoryColors: Record<Category, string> = {
   Société: "bg-teal-600 text-white",
   International: "bg-orange-600 text-white",
   Environnement: "bg-emerald-600 text-white",
+  Justice: "bg-indigo-600 text-white",
 };
 
 export const categoryImageMap: Record<Category, string> = {
@@ -54,6 +57,7 @@ export const categoryImageMap: Record<Category, string> = {
   Société: "/img/societe.jpg",
   International: "/img/goree.jpg",
   Environnement: "/img/goree.jpg",
+  Justice: "/img/goree.jpg",
 };
 
 const authors: Author[] = [
