@@ -137,13 +137,43 @@ export function ArticleDialog({
               <Share2 className="h-3.5 w-3.5 text-muted-foreground/60" />
               <span className="text-[12px] font-semibold text-muted-foreground/70">Partager :</span>
               <div className="flex gap-1.5">
-                <Button variant="outline" size="icon" className="h-8 w-8 rounded-lg hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-colors" aria-label="Facebook">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8 rounded-lg hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-colors"
+                  aria-label="Facebook"
+                  onClick={() => {
+                    const url = encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '');
+                    const text = encodeURIComponent(article.title);
+                    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}`, '_blank', 'width=600,height=400');
+                  }}
+                >
                   <Facebook className="h-3.5 w-3.5" />
                 </Button>
-                <Button variant="outline" size="icon" className="h-8 w-8 rounded-lg hover:bg-sky-500 hover:text-white hover:border-sky-500 transition-colors" aria-label="Twitter">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8 rounded-lg hover:bg-sky-500 hover:text-white hover:border-sky-500 transition-colors"
+                  aria-label="Twitter"
+                  onClick={() => {
+                    const url = encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '');
+                    const text = encodeURIComponent(article.title);
+                    window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank', 'width=600,height=400');
+                  }}
+                >
                   <Twitter className="h-3.5 w-3.5" />
                 </Button>
-                <Button variant="outline" size="icon" className="h-8 w-8 rounded-lg hover:bg-blue-700 hover:text-white hover:border-blue-700 transition-colors" aria-label="LinkedIn">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8 rounded-lg hover:bg-blue-700 hover:text-white hover:border-blue-700 transition-colors"
+                  aria-label="LinkedIn"
+                  onClick={() => {
+                    const url = encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '');
+                    const text = encodeURIComponent(article.title);
+                    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, '_blank', 'width=600,height=400');
+                  }}
+                >
                   <Linkedin className="h-3.5 w-3.5" />
                 </Button>
               </div>

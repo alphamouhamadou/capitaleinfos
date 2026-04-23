@@ -15,6 +15,7 @@ import {
   Palette,
   Users,
   Globe,
+  Leaf,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -26,6 +27,7 @@ const navLinks = [
   { label: 'Culture', href: '#rubriques', category: 'Culture', icon: Palette },
   { label: 'Société', href: '#rubriques', category: 'Société', icon: Users },
   { label: 'International', href: '#rubriques', category: 'International', icon: Globe },
+  { label: 'Environnement', href: '#rubriques', category: 'Environnement', icon: Leaf },
 ];
 
 interface HeaderProps {

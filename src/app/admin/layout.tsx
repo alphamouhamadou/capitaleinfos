@@ -22,6 +22,7 @@ import {
   Menu,
   ArrowLeft,
   ChevronRight,
+  Users,
 } from "lucide-react";
 
 const navItems = [
@@ -34,6 +35,11 @@ const navItems = [
     label: "Articles",
     href: "/admin/articles",
     icon: FileText,
+  },
+  {
+    label: "Éditeurs",
+    href: "/admin/editors",
+    icon: Users,
   },
   {
     label: "Paramètres",

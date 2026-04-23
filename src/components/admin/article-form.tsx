@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,7 +16,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, Save, ArrowLeft } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { Loader2, Save, ArrowLeft, Upload, Image as ImageIcon, Link, X } from "lucide-react";
 import { categories } from "@/lib/data";
 
 interface ArticleFormProps {
@@ -38,8 +40,12 @@ interface ArticleFormProps {
 
 export default function ArticleForm({ initialData, isEdit = false }: ArticleFormProps) {
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
+  const [imageMode, setImageMode] = useState<"upload" | "url">("upload");
+  const [imagePreview, setImagePreview] = useState(initialData?.image || "");
   const [formData, setFormData] = useState({
     title: initialData?.title || "",
     excerpt: initialData?.excerpt || "",
@@ -47,12 +53,79 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
     category: initialData?.category || "",
     authorName: initialData?.authorName || "",
     authorRole: initialData?.authorRole || "",
-    image: initialData?.image || "/img/hero-dakar.jpg",
+    image: initialData?.image || "",
     readTime: initialData?.readTime || 3,
     isFeatured: initialData?.isFeatured || false,
     isTrending: initialData?.isTrending || false,
     published: initialData?.published ?? true,
   });
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate type
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml"];
+    if (!allowedTypes.includes(file.type)) {
+      setError("Type de fichier non autorisé. Utilisez JPG, PNG, GIF ou WebP.");
+      return;
+    }
+
+    // Validate size
+    if (file.size > 5 * 1024 * 1024) {
+      setError("L'image est trop volumineuse. Taille maximale : 5 Mo.");
+      return;
+    }
+
+    setUploading(true);
+    setError("");
+
+    // Show local preview immediately
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+
+    try {
+      const uploadData = new FormData();
+      uploadData.append("file", file);
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: uploadData,
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setFormData((prev) => ({ ...prev, image: data.url }));
+        setImagePreview(data.url);
+      } else {
+        const data = await res.json();
+        setError(data.error || "Erreur lors du téléversement");
+        setImagePreview("");
+      }
+    } catch {
+      setError("Erreur de connexion au serveur");
+      setImagePreview("");
+    } finally {
+      setUploading(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  const handleUrlChange = (url: string) => {
+    setFormData((prev) => ({ ...prev, image: url }));
+    setImagePreview(url);
+  };
+
+  const removeImage = () => {
+    setFormData((prev) => ({ ...prev, image: "" }));
+    setImagePreview("");
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,7 +145,6 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
       });
 
       if (res.ok) {
-        // Dispatch custom event so the public ArticlesProvider can refresh
         if (typeof window !== "undefined") {
           window.dispatchEvent(new CustomEvent("articles-refresh"));
         }
@@ -112,7 +184,7 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
         </div>
         <Button
           type="submit"
-          disabled={loading}
+          disabled={loading || uploading}
           className="bg-red-600 hover:bg-red-700 text-white shadow-md"
         >
           {loading ? (
@@ -278,18 +350,6 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="image" className="text-sm">
-                  URL de l&apos;image
-                </Label>
-                <Input
-                  id="image"
-                  placeholder="/img/hero-dakar.jpg"
-                  value={formData.image}
-                  onChange={(e) => updateField("image", e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2">
                 <Label htmlFor="readTime" className="text-sm">
                   Temps de lecture (min)
                 </Label>
@@ -303,6 +363,122 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
                   }
                 />
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Image */}
+          <Card className="border-0 shadow-sm">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base font-semibold">
+                Image de l&apos;article
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Mode toggle */}
+              <div className="flex rounded-lg border overflow-hidden">
+                <button
+                  type="button"
+                  onClick={() => setImageMode("upload")}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-medium transition-colors ${
+                    imageMode === "upload"
+                      ? "bg-red-600 text-white"
+                      : "bg-background text-muted-foreground hover:bg-muted"
+                  }`}
+                >
+                  <Upload className="h-3.5 w-3.5" />
+                  Téléverser
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setImageMode("url")}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-medium transition-colors ${
+                    imageMode === "url"
+                      ? "bg-red-600 text-white"
+                      : "bg-background text-muted-foreground hover:bg-muted"
+                  }`}
+                >
+                  <Link className="h-3.5 w-3.5" />
+                  URL
+                </button>
+              </div>
+
+              {/* Image preview */}
+              {imagePreview && (
+                <div className="relative aspect-video rounded-xl overflow-hidden border border-border/50">
+                  <Image
+                    src={imagePreview}
+                    alt="Aperçu de l'image"
+                    fill
+                    className="object-cover"
+                    sizes="400px"
+                  />
+                  <button
+                    type="button"
+                    onClick={removeImage}
+                    className="absolute top-2 right-2 h-7 w-7 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center transition-colors"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              )}
+
+              {/* Upload mode */}
+              {imageMode === "upload" && (
+                <div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full h-24 border-dashed flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-foreground hover:border-primary/50 transition-colors"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading}
+                  >
+                    {uploading ? (
+                      <>
+                        <Loader2 className="h-6 w-6 animate-spin" />
+                        <span className="text-xs">Téléversement en cours...</span>
+                      </>
+                    ) : (
+                      <>
+                        <ImageIcon className="h-6 w-6" />
+                        <span className="text-xs font-medium">
+                          Cliquer pour sélectionner une image
+                        </span>
+                        <span className="text-[10px] text-muted-foreground/60">
+                          JPG, PNG, GIF, WebP — Max 5 Mo
+                        </span>
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
+
+              {/* URL mode */}
+              {imageMode === "url" && (
+                <div className="space-y-2">
+                  <Label htmlFor="image-url" className="text-sm">
+                    URL de l&apos;image
+                  </Label>
+                  <Input
+                    id="image-url"
+                    placeholder="https://exemple.com/image.jpg"
+                    value={imageMode === "url" && !formData.image.startsWith("/uploads/") ? formData.image : ""}
+                    onChange={(e) => handleUrlChange(e.target.value)}
+                  />
+                </div>
+              )}
+
+              {!imagePreview && (
+                <p className="text-[11px] text-muted-foreground/60 text-center">
+                  Aucune image sélectionnée — une image par défaut sera utilisée
+                </p>
+              )}
             </CardContent>
           </Card>
 

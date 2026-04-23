@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Facebook,
   Twitter,
@@ -22,22 +24,34 @@ const categoryLinks = [
 ];
 
 const infoLinks = [
-  'À propos',
-  'Contact',
-  'Mentions légales',
-  'Politique de confidentialité',
-  "Conditions d'utilisation",
+  { label: 'À propos', href: '#a-la-une' },
+  { label: 'Contact', href: 'mailto:contact@capitaleinfos.sn' },
+  { label: 'Mentions légales', href: '#' },
+  { label: 'Politique de confidentialité', href: '#' },
+  { label: "Conditions d'utilisation", href: '#' },
 ];
 
 const socialLinks = [
-  { icon: Facebook, label: 'Facebook', href: '#', color: 'hover:bg-blue-600' },
-  { icon: Twitter, label: 'Twitter', href: '#', color: 'hover:bg-sky-500' },
-  { icon: Instagram, label: 'Instagram', href: '#', color: 'hover:bg-pink-600' },
-  { icon: Youtube, label: 'YouTube', href: '#', color: 'hover:bg-red-600' },
+  { icon: Facebook, label: 'Facebook', href: 'https://facebook.com/capitaleinfos', color: 'hover:bg-blue-600' },
+  { icon: Twitter, label: 'Twitter', href: 'https://twitter.com/capitaleinfos', color: 'hover:bg-sky-500' },
+  { icon: Instagram, label: 'Instagram', href: 'https://instagram.com/capitaleinfos', color: 'hover:bg-pink-600' },
+  { icon: Youtube, label: 'YouTube', href: 'https://youtube.com/@capitaleinfos', color: 'hover:bg-red-600' },
   { icon: Rss, label: 'RSS', href: '#', color: 'hover:bg-amber-500' },
 ];
 
 export function Footer() {
+  const handleCategoryClick = (category: string) => {
+    window.dispatchEvent(new CustomEvent('switch-category', { detail: category }));
+    setTimeout(() => {
+      const el = document.querySelector('#rubriques');
+      if (el) {
+        const headerHeight = 120;
+        const y = el.getBoundingClientRect().top + window.scrollY - headerHeight;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    }, 100);
+  };
+
   return (
     <footer className="relative overflow-hidden">
       {/* Top gradient separator */}
@@ -99,13 +113,13 @@ export function Footer() {
               <ul className="space-y-2.5">
                 {categoryLinks.map((link) => (
                   <li key={link}>
-                    <a
-                      href="#"
+                    <button
+                      onClick={() => handleCategoryClick(link)}
                       className="text-[12.5px] text-muted-foreground/60 hover:text-primary transition-colors duration-300 flex items-center gap-2 group"
                     >
                       <span className="h-0.5 w-0.5 rounded-full bg-primary/30 group-hover:bg-primary group-hover:w-1 group-hover:h-1 transition-all duration-300" />
                       {link}
-                    </a>
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -118,13 +132,13 @@ export function Footer() {
               </h3>
               <ul className="space-y-2.5">
                 {infoLinks.map((link) => (
-                  <li key={link}>
+                  <li key={link.label}>
                     <a
-                      href="#"
+                      href={link.href}
                       className="text-[12.5px] text-muted-foreground/60 hover:text-primary transition-colors duration-300 flex items-center gap-2 group"
                     >
                       <span className="h-0.5 w-0.5 rounded-full bg-primary/30 group-hover:bg-primary group-hover:w-1 group-hover:h-1 transition-all duration-300" />
-                      {link}
+                      {link.label}
                     </a>
                   </li>
                 ))}
@@ -141,6 +155,8 @@ export function Footer() {
                   <a
                     key={social.label}
                     href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className={`w-9 h-9 rounded-xl bg-muted/60 border border-border/30 flex items-center justify-center ${social.color} transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 hover:scale-105`}
                     aria-label={social.label}
                   >

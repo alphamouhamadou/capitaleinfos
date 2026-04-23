@@ -53,6 +53,13 @@ export function LatestNews({ onArticleClick }: LatestNewsProps) {
         <Button
           variant="ghost"
           className="hidden sm:flex gap-1.5 text-xs font-semibold text-muted-foreground hover:text-primary transition-colors rounded-lg px-3"
+          onClick={() => {
+            const el = document.querySelector('#rubriques');
+            if (el) {
+              const y = el.getBoundingClientRect().top + window.scrollY - 120;
+              window.scrollTo({ top: y, behavior: 'smooth' });
+            }
+          }}
         >
           Tout voir
           <ChevronRight className="h-3.5 w-3.5" />
@@ -133,6 +140,13 @@ export function LatestNews({ onArticleClick }: LatestNewsProps) {
         <Button
           variant="outline"
           className="gap-2 text-sm font-semibold rounded-xl px-6"
+          onClick={() => {
+            const el = document.querySelector('#rubriques');
+            if (el) {
+              const y = el.getBoundingClientRect().top + window.scrollY - 120;
+              window.scrollTo({ top: y, behavior: 'smooth' });
+            }
+          }}
         >
           Voir plus d&apos;articles
           <ChevronRight className="h-4 w-4" />
