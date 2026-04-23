@@ -99,6 +99,7 @@ export function CategorySection({ onArticleClick }: CategorySectionProps) {
                     fill
                     className="object-cover img-zoom"
                     sizes="(max-width: 768px) 100vw, 50vw"
+                    unoptimized
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
                   <div className="absolute top-3.5 left-3.5">
@@ -148,6 +149,7 @@ export function CategorySection({ onArticleClick }: CategorySectionProps) {
                       fill
                       className="object-cover img-zoom"
                       sizes="88px"
+                      unoptimized
                     />
                   </div>
                   <div className="min-w-0 flex-1 py-0.5">

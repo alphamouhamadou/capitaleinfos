@@ -411,6 +411,7 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
                     fill
                     className="object-cover"
                     sizes="400px"
+                    unoptimized
                   />
                   <button
                     type="button"

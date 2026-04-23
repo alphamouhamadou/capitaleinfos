@@ -70,6 +70,7 @@ export function HeroSection({ onArticleClick }: HeroSectionProps) {
               className="object-cover img-zoom"
               priority
               sizes="(max-width: 1024px) 100vw, 66vw"
+              unoptimized
             />
 
             {/* Multi-layer gradient */}
@@ -157,6 +158,7 @@ export function HeroSection({ onArticleClick }: HeroSectionProps) {
                   fill
                   className="object-cover img-zoom"
                   sizes="(max-width: 1024px) 100vw, 34vw"
+                  unoptimized
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/10" />
 

@@ -3,6 +3,9 @@ import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 import { requireAdmin } from "@/lib/admin-auth";
 
+// Store uploads OUTSIDE of public/ so they work in standalone mode
+const UPLOAD_DIR = path.join(process.cwd(), "uploads");
+
 export async function POST(request: NextRequest) {
   try {
     const admin = await requireAdmin();
@@ -46,14 +49,14 @@ export async function POST(request: NextRequest) {
     const uniqueName = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}${ext}`;
 
     // Ensure upload directory exists
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
-    await mkdir(uploadDir, { recursive: true });
+    await mkdir(UPLOAD_DIR, { recursive: true });
 
     // Write file
-    const filePath = path.join(uploadDir, uniqueName);
+    const filePath = path.join(UPLOAD_DIR, uniqueName);
     await writeFile(filePath, buffer);
 
-    const publicUrl = `/uploads/${uniqueName}`;
+    // Return URL pointing to our dedicated API route (works in standalone mode)
+    const publicUrl = `/api/uploads/${uniqueName}`;
 
     return NextResponse.json({
       url: publicUrl,

@@ -54,6 +54,7 @@ export function ArticleDialog({
             className="object-cover"
             sizes="(max-width: 768px) 100vw, 720px"
             priority
+            unoptimized
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20" />
 
@@ -201,6 +202,7 @@ export function ArticleDialog({
                         fill
                         className="object-cover img-zoom"
                         sizes="200px"
+                        unoptimized
                       />
                     </div>
                     <h4 className="text-[12.5px] font-semibold line-clamp-2 group-hover:text-primary transition-colors leading-snug">
