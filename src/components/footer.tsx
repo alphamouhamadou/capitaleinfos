@@ -55,7 +55,7 @@ export function Footer() {
   return (
     <footer className="relative overflow-hidden">
       {/* ── Dark top banner matching header nav ── */}
-      <div className="bg-foreground text-white">
+      <div className="bg-black text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -83,7 +83,7 @@ export function Footer() {
       </div>
 
       {/* ── Main footer area ── */}
-      <div className="relative bg-foreground text-white">
+      <div className="relative bg-black text-white">
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-10 pb-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
             {/* Brand info */}

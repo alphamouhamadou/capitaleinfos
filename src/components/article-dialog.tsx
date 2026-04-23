@@ -62,6 +62,7 @@ function ArticleContent({
   const scrollRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   const handleScroll = useCallback(() => {
     const el = scrollRef.current;
@@ -92,31 +93,41 @@ function ArticleContent({
 
       {/* ── HERO IMAGE SECTION ── */}
       <div ref={heroRef} className="relative w-full">
-        {/* Skeleton loader */}
-        {!imageLoaded && (
-          <div className="aspect-[16/9] sm:aspect-[2.2/1] w-full bg-muted animate-pulse" />
-        )}
-        <div
-          className={`relative w-full overflow-hidden transition-opacity duration-500 ${
-            imageLoaded ? 'opacity-100' : 'opacity-0 absolute inset-0'
-          }`}
-        >
+        {/* Container always keeps its aspect ratio */}
+        <div className="relative aspect-[16/9] sm:aspect-[2.2/1] w-full overflow-hidden bg-muted">
+          {/* Skeleton loader — fades out when image loads */}
+          {!imageLoaded && !imageError && (
+            <div className="absolute inset-0 bg-muted animate-pulse z-10" />
+          )}
+          {/* Error fallback */}
+          {imageError && (
+            <div className="absolute inset-0 bg-muted z-10 flex items-center justify-center">
+              <div className="text-center">
+                <div className="w-16 h-16 rounded-full bg-muted-foreground/10 flex items-center justify-center mx-auto mb-3">
+                  <svg className="w-8 h-8 text-muted-foreground/30" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.41a2.25 2.25 0 013.182 0l2.909 2.91M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" /></svg>
+                </div>
+                <p className="text-xs text-muted-foreground/40">Image non disponible</p>
+              </div>
+            </div>
+          )}
+          {/* Article image */}
           <Image
             src={article.image}
             alt={article.title}
             fill
-            className="object-cover"
+            className={`object-cover transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
             sizes="100vw"
             priority
             unoptimized
             onLoad={() => setImageLoaded(true)}
+            onError={() => setImageError(true)}
           />
           {/* Multi-layer gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10 z-20" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent z-20" />
 
           {/* ── Overlay content ── */}
-          <div className="absolute bottom-0 left-0 right-0">
+          <div className="absolute bottom-0 left-0 right-0 z-30">
             <div className="max-w-4xl mx-auto px-5 sm:px-8 lg:px-12 pb-8 sm:pb-12">
               {/* Category badge */}
               <motion.div
@@ -464,7 +475,7 @@ export function ArticleDialog({
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent
         showCloseButton={false}
-        className="!fixed !inset-0 !left-0 !top-0 z-50 flex flex-col w-full h-full !max-w-none !m-0 !p-0 !border-0 !rounded-none bg-background !translate-x-0 !translate-y-0 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 overflow-hidden"
+        className="!fixed !inset-0 !left-0 !top-0 z-50 !flex !flex-col w-full h-full !max-w-none !sm:max-w-none !m-0 !p-0 !border-0 !rounded-none !gap-0 !shadow-none bg-background !translate-x-0 !translate-y-0 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 overflow-hidden"
       >
         <DialogTitle className="sr-only">
           {article.title}

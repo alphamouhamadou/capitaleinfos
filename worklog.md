@@ -69,3 +69,22 @@ Implemented two major features: image upload for articles and multi-user editor 
 ## Build Verification
 - Next.js build successful (17 pages, 10 API routes)
 - All new routes functional: /admin/editors, /api/upload, /api/admin/editors
+
+---
+Task ID: 1
+Agent: Main Agent
+Task: Fix article dialog centering, image display, and footer black background
+
+Work Log:
+- Read article-dialog.tsx and identified that the hero image container lost its height when image loaded (transition from absolute to static positioning caused container to collapse)
+- Read footer.tsx and identified bg-foreground instead of explicit bg-black
+- Read ui/dialog.tsx to understand base DialogContent classes that needed overriding
+- Fixed hero image section: restructured with aspect-[16/9] sm:aspect-[2.2/1] on container, skeleton as absolute overlay, added imageError state with fallback UI
+- Fixed dialog centering: added !flex, !flex-col, !sm:max-w-none, !gap-0, !shadow-none to properly override base DialogContent classes (grid, sm:max-w-lg, gap-4, shadow-lg)
+- Fixed footer: changed bg-foreground to bg-black in both top banner and main footer area
+- Build verified: 0 errors
+
+Stage Summary:
+- article-dialog.tsx: Hero image now always has aspect ratio, image displays correctly with fade-in, error fallback shown if image fails
+- article-dialog.tsx: Dialog properly fullscreen with all base classes overridden using !important
+- footer.tsx: Both footer sections now use explicit bg-black
