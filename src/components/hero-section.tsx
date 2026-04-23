@@ -4,15 +4,35 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { Calendar, Clock, User, ArrowRight, Sparkles } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { featuredArticles, categoryColors } from '@/lib/data';
+import { categoryColors } from '@/lib/data';
+import { useArticles } from '@/lib/articles-context';
 
 interface HeroSectionProps {
   onArticleClick: (id: string) => void;
 }
 
 export function HeroSection({ onArticleClick }: HeroSectionProps) {
+  const { featuredArticles, loading } = useArticles();
   const mainArticle = featuredArticles[0];
   const secondaryArticles = featuredArticles.slice(1, 4);
+
+  if (loading || !mainArticle) {
+    return (
+      <section id="a-la-une" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-6 scroll-mt-28">
+        <div className="animate-pulse">
+          <div className="h-4 bg-muted rounded w-24 mb-7" />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5">
+            <div className="lg:col-span-8 h-[400px] bg-muted rounded-2xl" />
+            <div className="lg:col-span-4 flex flex-col gap-4 lg:gap-5">
+              <div className="h-40 bg-muted rounded-2xl" />
+              <div className="h-40 bg-muted rounded-2xl" />
+              <div className="h-40 bg-muted rounded-2xl" />
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="a-la-une" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-6 scroll-mt-28">

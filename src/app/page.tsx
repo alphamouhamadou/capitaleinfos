@@ -13,6 +13,7 @@ import { NewsletterSection } from '@/components/newsletter-section';
 import { Footer } from '@/components/footer';
 import { ArticleDialog } from '@/components/article-dialog';
 import { SearchDialog } from '@/components/search-dialog';
+import { ArticlesProvider } from '@/lib/articles-context';
 
 export default function Home() {
   const [selectedArticleId, setSelectedArticleId] = useState<string | null>(null);
@@ -35,6 +36,7 @@ export default function Home() {
   };
 
   return (
+    <ArticlesProvider>
     <div className="min-h-screen flex flex-col bg-background">
       <Header onSearchOpen={() => setSearchOpen(true)} />
       <BreakingNews />
@@ -86,5 +88,6 @@ export default function Home() {
         onArticleClick={handleArticleClick}
       />
     </div>
+    </ArticlesProvider>
   );
 }

@@ -6,7 +6,8 @@ import { Calendar, Clock, ArrowUpRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { latestArticles, categoryColors } from '@/lib/data';
+import { categoryColors } from '@/lib/data';
+import { useArticles } from '@/lib/articles-context';
 import { ChevronRight } from 'lucide-react';
 
 interface LatestNewsProps {
@@ -14,7 +15,30 @@ interface LatestNewsProps {
 }
 
 export function LatestNews({ onArticleClick }: LatestNewsProps) {
+  const { latestArticles, loading } = useArticles();
   const displayArticles = latestArticles.slice(0, 6);
+
+  if (loading) {
+    return (
+      <section id="dernieres-actualites" className="py-8 scroll-mt-28">
+        <div className="animate-pulse">
+          <div className="h-4 bg-muted rounded w-40 mb-7" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="rounded-2xl overflow-hidden">
+                <div className="aspect-[16/10] bg-muted" />
+                <div className="p-4 pb-5 space-y-3">
+                  <div className="h-4 bg-muted rounded w-3/4" />
+                  <div className="h-3 bg-muted rounded w-full" />
+                  <div className="h-3 bg-muted rounded w-1/2" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="dernieres-actualites" className="py-8 scroll-mt-28">

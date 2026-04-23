@@ -82,6 +82,10 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
       });
 
       if (res.ok) {
+        // Dispatch custom event so the public ArticlesProvider can refresh
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("articles-refresh"));
+        }
         router.push("/admin/articles");
         router.refresh();
       } else {

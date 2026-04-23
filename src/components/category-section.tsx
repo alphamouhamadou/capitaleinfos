@@ -7,10 +7,10 @@ import { Calendar, Clock, ArrowUpRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-  getArticlesByCategory,
   categoryColors,
   type Category,
 } from '@/lib/data';
+import { useArticles } from '@/lib/articles-context';
 
 const tabCategories: Category[] = [
   'Politique',
@@ -27,6 +27,7 @@ interface CategorySectionProps {
 }
 
 export function CategorySection({ onArticleClick }: CategorySectionProps) {
+  const { getArticlesByCategory, loading } = useArticles();
   const [activeCategory, setActiveCategory] = useState<Category>('Politique');
   const categoryArticles = getArticlesByCategory(activeCategory);
   const mainArticle = categoryArticles[0];

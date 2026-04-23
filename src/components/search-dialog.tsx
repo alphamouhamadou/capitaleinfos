@@ -9,7 +9,12 @@ import {
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { searchArticles, categoryColors, type Article } from '@/lib/data';
+import { categoryColors } from '@/lib/data';
+import React from 'react';
+import {
+  type Article,
+  useArticles,
+} from '@/lib/articles-context';
 
 interface SearchDialogProps {
   open: boolean;
@@ -18,6 +23,7 @@ interface SearchDialogProps {
 }
 
 function SearchDialogInner({ onArticleClick, onClose }: { onArticleClick: (id: string) => void; onClose: () => void }) {
+  const { searchArticles } = useArticles();
   const [query, setQuery] = React.useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -30,7 +36,7 @@ function SearchDialogInner({ onArticleClick, onClose }: { onArticleClick: (id: s
       return searchArticles(query);
     }
     return [];
-  }, [query]);
+  }, [query, searchArticles]);
 
   const handleSelect = (id: string) => {
     onClose();
@@ -134,8 +140,6 @@ function SearchDialogInner({ onArticleClick, onClose }: { onArticleClick: (id: s
     </>
   );
 }
-
-import React from 'react';
 
 export function SearchDialog({ open, onClose, onArticleClick }: SearchDialogProps) {
   const [key, setKey] = React.useState(0);

@@ -1,8 +1,9 @@
 'use client';
 
-import { trendingArticles } from '@/lib/data';
+import { useArticles } from '@/lib/articles-context';
 
 export function BreakingNews() {
+  const { trendingArticles } = useArticles();
   const headlines = trendingArticles.slice(0, 4);
 
   return (

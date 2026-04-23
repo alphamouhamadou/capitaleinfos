@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import { Flame, TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { trendingArticles, type Article } from '@/lib/data';
+import { categoryColors } from '@/lib/data';
+import { useArticles, type Article } from '@/lib/articles-context';
 
 interface TrendingSidebarProps {
   onArticleClick: (id: string) => void;
@@ -60,7 +61,27 @@ function TrendingItem({
 }
 
 export function TrendingSidebar({ onArticleClick }: TrendingSidebarProps) {
+  const { trendingArticles, loading } = useArticles();
   const topArticles = trendingArticles.slice(0, 5);
+
+  if (loading) {
+    return (
+      <aside className="space-y-6">
+        <div className="animate-pulse space-y-4">
+          <div className="h-12 bg-muted rounded-2xl" />
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="flex items-center gap-3 p-3">
+              <div className="w-8 h-8 bg-muted rounded-lg" />
+              <div className="flex-1 space-y-2">
+                <div className="h-3 bg-muted rounded w-3/4" />
+                <div className="h-2 bg-muted rounded w-1/2" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </aside>
+    );
+  }
 
   return (
     <aside className="space-y-6">

@@ -4,16 +4,12 @@ import { motion } from 'framer-motion';
 import { Quote, ArrowRight } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
-import { articles, type Article } from '@/lib/data';
+import { type Article } from '@/lib/articles-context';
+import { useArticles } from '@/lib/articles-context';
 
 interface OpinionSectionProps {
   onArticleClick: (id: string) => void;
 }
-
-const opinionArticles: Article[] = articles.filter(
-  (a) =>
-    a.category === 'Environnement' || a.category === 'Politique'
-).slice(0, 3);
 
 const avatarGradients = [
   'bg-gradient-to-br from-primary to-red-600 text-white',
@@ -22,6 +18,11 @@ const avatarGradients = [
 ];
 
 export function OpinionSection({ onArticleClick }: OpinionSectionProps) {
+  const { articles } = useArticles();
+  const opinionArticles: Article[] = articles.filter(
+    (a) =>
+      a.category === 'Environnement' || a.category === 'Politique'
+  ).slice(0, 3);
   return (
     <section id="opinions" className="py-8 scroll-mt-28">
       {/* Section header */}

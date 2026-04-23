@@ -11,11 +11,12 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import {
-  getArticleById,
-  getRelatedArticles,
   categoryColors,
-  type Article,
 } from '@/lib/data';
+import {
+  type Article,
+  useArticles,
+} from '@/lib/articles-context';
 
 interface ArticleDialogProps {
   articleId: string | null;
@@ -30,6 +31,7 @@ export function ArticleDialog({
   onClose,
   onArticleClick,
 }: ArticleDialogProps) {
+  const { getArticleById, getRelatedArticles } = useArticles();
   const article = articleId ? getArticleById(articleId) : null;
 
   if (!article) return null;
