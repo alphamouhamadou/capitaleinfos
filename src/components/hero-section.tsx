@@ -35,13 +35,13 @@ export function HeroSection({ onArticleClick }: HeroSectionProps) {
   }
 
   return (
-    <section id="a-la-une" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-6 scroll-mt-28">
+    <section id="a-la-une" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-5 sm:pb-6 scroll-mt-28">
       {/* Section label */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="flex items-center gap-4 mb-7"
+        className="flex items-center gap-4 mb-5 sm:mb-7"
       >
         <div className="flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-amber-500" />
@@ -53,13 +53,13 @@ export function HeroSection({ onArticleClick }: HeroSectionProps) {
       </motion.div>
 
       {/* ── MAGAZINE GRID ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 lg:gap-5">
         {/* ── MAIN HERO ARTICLE ── */}
         <motion.div
           initial={{ opacity: 0, y: 25 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-          className="lg:col-span-8 group cursor-pointer"
+          className="sm:col-span-2 lg:col-span-8 group cursor-pointer"
           onClick={() => onArticleClick(mainArticle.id)}
         >
           <div className="relative w-full aspect-[16/9] sm:aspect-[16/8] lg:aspect-[16/8.5] overflow-hidden rounded-2xl lg:rounded-[1.75rem] shadow-2xl shadow-black/[0.08] dark:shadow-black/30">
@@ -137,7 +137,7 @@ export function HeroSection({ onArticleClick }: HeroSectionProps) {
         </motion.div>
 
         {/* ── SIDE ARTICLES ── */}
-        <div className="lg:col-span-4 flex flex-col gap-4 lg:gap-5">
+        <div className="sm:col-span-2 lg:col-span-4 grid grid-cols-2 lg:grid-cols-1 gap-4 lg:gap-5">
           {secondaryArticles.map((article, index) => (
             <motion.article
               key={article.id}
@@ -148,10 +148,10 @@ export function HeroSection({ onArticleClick }: HeroSectionProps) {
                 delay: 0.12 * (index + 1),
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="group cursor-pointer flex-1"
+              className="group cursor-pointer lg:flex-1"
               onClick={() => onArticleClick(article.id)}
             >
-              <div className="relative h-full min-h-[140px] lg:min-h-0 overflow-hidden rounded-2xl shadow-lg shadow-black/[0.05] dark:shadow-black/20 card-lift">
+              <div className="relative h-full min-h-[160px] lg:min-h-[140px] overflow-hidden rounded-2xl shadow-lg shadow-black/[0.05] dark:shadow-black/20 card-lift">
                 <Image
                   src={article.image}
                   alt={article.title}

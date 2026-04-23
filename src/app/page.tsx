@@ -47,7 +47,7 @@ export default function Home() {
         <div className="section-divider mx-auto max-w-7xl" />
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
             <div className="lg:col-span-8">
               <LatestNews onArticleClick={handleArticleClick} />
               <div className="section-divider my-0" />
@@ -58,8 +58,10 @@ export default function Home() {
             <div className="lg:col-span-4">
               <div className="lg:sticky lg:top-24 space-y-5">
                 <TrendingSidebar onArticleClick={handleArticleClick} />
-                <WeatherWidget />
-                <ExchangeRateWidget />
+                <div className="grid grid-cols-2 lg:grid-cols-1 gap-5">
+                  <WeatherWidget />
+                  <ExchangeRateWidget />
+                </div>
                 <PrayerTimesWidget />
               </div>
             </div>

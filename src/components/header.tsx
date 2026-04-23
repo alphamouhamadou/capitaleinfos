@@ -9,6 +9,7 @@ import {
   TrendingUp,
   X,
   ChevronRight,
+  ChevronLeft,
   Newspaper,
   Landmark,
   BarChart3,
@@ -167,8 +168,8 @@ export function Header({ onSearchOpen }: HeaderProps) {
             {/* Logo + Navigation */}
             <div className="flex h-14 items-center justify-between border-t border-border/20">
               {/* Logo */}
-              <a href="#a-la-une" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="flex items-center gap-3 group">
-                <div className="relative h-10 w-10 rounded-xl overflow-hidden shadow-md shadow-primary/10 group-hover:shadow-primary/20 transition-all duration-500">
+              <a href="#a-la-une" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="flex items-center gap-2 sm:gap-3 group flex-shrink-0">
+                <div className="relative h-9 w-9 sm:h-10 sm:w-10 rounded-xl overflow-hidden shadow-md shadow-primary/10 group-hover:shadow-primary/20 transition-all duration-500">
                   <img
                     src="/img/logo-capitale-infos.jpg"
                     alt="Capitale Infos"
@@ -176,16 +177,16 @@ export function Header({ onSearchOpen }: HeaderProps) {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-lg font-black tracking-tight leading-none text-foreground">
+                  <span className="text-[15px] sm:text-lg font-black tracking-tight leading-none text-foreground">
                     CAPITALE<span className="text-primary"> INFOS</span>
                   </span>
-                  <span className="text-[8px] font-bold uppercase tracking-[0.25em] text-muted-foreground/70 mt-0.5">
+                  <span className="text-[7px] sm:text-[8px] font-bold uppercase tracking-[0.25em] text-muted-foreground/70 mt-0.5">
                     Le Journal du Sénégal
                   </span>
                 </div>
               </a>
 
-              {/* Desktop nav */}
+              {/* Desktop nav (lg+) */}
               <nav className="hidden lg:flex items-center gap-0.5" aria-label="Navigation principale">
                 {navLinks.map((link) => {
                   const IconComp = link.icon;
@@ -221,6 +222,27 @@ export function Header({ onSearchOpen }: HeaderProps) {
                 </svg>
               </Button>
             </div>
+
+            {/* Horizontal scroll nav (md only) */}
+            <nav className="hidden md:flex lg:hidden items-center gap-1 pb-2.5 -mt-1 overflow-x-auto scrollbar-none" aria-label="Navigation tablette">
+              {navLinks.map((link) => {
+                const IconComp = link.icon;
+                return (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavClick(link.href, link.category);
+                    }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-semibold text-muted-foreground transition-all duration-300 hover:text-foreground rounded-lg hover:bg-primary/[0.06] whitespace-nowrap group/item flex-shrink-0"
+                  >
+                    <IconComp className="h-3 w-3 opacity-50 group-hover/item:opacity-100 transition-opacity" />
+                    <span>{link.label}</span>
+                  </a>
+                );
+              })}
+            </nav>
           </div>
         </div>
       </header>

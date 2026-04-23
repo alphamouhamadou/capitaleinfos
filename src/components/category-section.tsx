@@ -54,18 +54,20 @@ export function CategorySection({ onArticleClick }: CategorySectionProps) {
       </div>
 
       <Tabs value={activeCategory} onValueChange={(v) => setActiveCategory(v as Category)}>
-        {/* Tabs */}
-        <TabsList className="w-full justify-start gap-1 bg-muted/40 p-1 h-auto flex-wrap mb-7 rounded-xl">
-          {tabCategories.map((cat) => (
-            <TabsTrigger
-              key={cat}
-              value={cat}
-              className="px-4 py-2 text-[12px] font-semibold transition-all duration-300 rounded-lg data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-lg data-[state=active]:shadow-black/[0.08] hover:bg-muted/80"
-            >
-              {cat}
-            </TabsTrigger>
-          ))}
-        </TabsList>
+        {/* Tabs — horizontal scroll on mobile */}
+        <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-none mb-6">
+          <TabsList className="w-max sm:w-full justify-start gap-1 bg-muted/40 p-1 h-auto flex-wrap sm:flex-nowrap rounded-xl min-w-full sm:min-w-0">
+            {tabCategories.map((cat) => (
+              <TabsTrigger
+                key={cat}
+                value={cat}
+                className="px-3.5 sm:px-4 py-2 text-[12px] font-semibold transition-all duration-300 rounded-lg whitespace-nowrap flex-shrink-0 data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-lg data-[state=active]:shadow-black/[0.08] hover:bg-muted/80"
+              >
+                {cat}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
 
         {/* Content */}
         <AnimatePresence mode="wait">
