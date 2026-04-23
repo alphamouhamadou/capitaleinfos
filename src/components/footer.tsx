@@ -45,7 +45,7 @@ export function Footer() {
     setTimeout(() => {
       const el = document.querySelector('#rubriques');
       if (el) {
-        const headerHeight = 120;
+        const headerHeight = 140;
         const y = el.getBoundingClientRect().top + window.scrollY - headerHeight;
         window.scrollTo({ top: y, behavior: 'smooth' });
       }
@@ -54,42 +54,45 @@ export function Footer() {
 
   return (
     <footer className="relative overflow-hidden">
-      {/* Top gradient separator */}
-      <div className="h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
-
-      {/* Background */}
-      <div className="relative bg-foreground/[0.03] dark:bg-foreground/[0.02]">
-        {/* Decorative blurs */}
-        <div className="absolute top-0 left-1/4 w-80 h-80 bg-primary/[0.03] rounded-full -translate-y-1/2 blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-amber-500/[0.02] rounded-full translate-y-1/2 blur-3xl" />
-
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-14 pb-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
-            {/* Brand */}
-            <div className="sm:col-span-2 lg:col-span-1">
-              <div className="flex items-center gap-3 mb-5">
-                <div className="h-10 w-10 rounded-xl overflow-hidden shadow-md shadow-primary/10">
-                  <img
-                    src="/img/logo-capitale-infos.jpg"
-                    alt="Capitale Infos"
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-                <div>
-                  <p className="text-[15px] font-black text-foreground tracking-tight">
-                    CAPITALE INFOS
-                  </p>
-                  <p className="text-[8px] font-bold uppercase tracking-[0.25em] text-primary">
-                    Le Journal du Sénégal
-                  </p>
-                </div>
+      {/* ── Dark top banner matching header nav ── */}
+      <div className="bg-foreground text-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="h-9 w-9 rounded-lg overflow-hidden ring-1 ring-white/20 shadow-lg">
+                <img
+                  src="/img/logo-capitale-infos.jpg"
+                  alt="Capitale Infos"
+                  className="h-full w-full object-cover"
+                />
               </div>
-              <p className="text-[12.5px] text-muted-foreground/70 leading-relaxed mb-5">
-                Capitale Infos est votre source d&apos;information en continu sur le
-                Sénégal. Nous couvrons l&apos;actualité politique, économique,
+              <div>
+                <p className="text-[15px] font-black tracking-tight text-white leading-none">
+                  CAPITALE <span className="text-primary">INFOS</span>
+                </p>
+                <p className="text-[8px] font-bold uppercase tracking-[0.25em] text-white/40 mt-0.5">
+                  Le Journal du Sénégal
+                </p>
+              </div>
+            </div>
+            <p className="text-[11.5px] text-white/50 text-center sm:text-right max-w-sm leading-relaxed">
+              Votre source d&apos;information en continu — Actualité politique, économique, sportive et culturelle du Sénégal avec rigueur et indépendance.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Main footer area ── */}
+      <div className="relative bg-muted/40 dark:bg-foreground/[0.03]">
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-10 pb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
+            {/* Brand info */}
+            <div className="sm:col-span-2 lg:col-span-1">
+              <p className="text-[12px] text-muted-foreground/70 leading-relaxed mb-4">
+                Capitale Infos couvre l&apos;actualité politique, économique,
                 sportive, culturelle et sociale avec rigueur et indépendance.
               </p>
-              <div className="space-y-2 text-[11px] text-muted-foreground/50">
+              <div className="space-y-1.5 text-[11px] text-muted-foreground/50">
                 <div className="flex items-center gap-2">
                   <MapPin className="h-3 w-3 text-primary/50" />
                   <span>Dakar, Sénégal</span>
@@ -107,15 +110,15 @@ export function Footer() {
 
             {/* Categories */}
             <div>
-              <h3 className="text-[10px] font-bold mb-5 uppercase tracking-[0.2em] text-foreground/40">
+              <h3 className="text-[10px] font-bold mb-4 uppercase tracking-[0.2em] text-foreground/40">
                 Rubriques
               </h3>
-              <ul className="space-y-2.5">
+              <ul className="space-y-2">
                 {categoryLinks.map((link) => (
                   <li key={link}>
                     <button
                       onClick={() => handleCategoryClick(link)}
-                      className="text-[12.5px] text-muted-foreground/60 hover:text-primary transition-colors duration-300 flex items-center gap-2 group"
+                      className="text-[12px] text-muted-foreground/60 hover:text-primary transition-colors duration-300 flex items-center gap-2 group"
                     >
                       <span className="h-0.5 w-0.5 rounded-full bg-primary/30 group-hover:bg-primary group-hover:w-1 group-hover:h-1 transition-all duration-300" />
                       {link}
@@ -127,15 +130,15 @@ export function Footer() {
 
             {/* Info */}
             <div>
-              <h3 className="text-[10px] font-bold mb-5 uppercase tracking-[0.2em] text-foreground/40">
+              <h3 className="text-[10px] font-bold mb-4 uppercase tracking-[0.2em] text-foreground/40">
                 Informations
               </h3>
-              <ul className="space-y-2.5">
+              <ul className="space-y-2">
                 {infoLinks.map((link) => (
                   <li key={link.label}>
                     <a
                       href={link.href}
-                      className="text-[12.5px] text-muted-foreground/60 hover:text-primary transition-colors duration-300 flex items-center gap-2 group"
+                      className="text-[12px] text-muted-foreground/60 hover:text-primary transition-colors duration-300 flex items-center gap-2 group"
                     >
                       <span className="h-0.5 w-0.5 rounded-full bg-primary/30 group-hover:bg-primary group-hover:w-1 group-hover:h-1 transition-all duration-300" />
                       {link.label}
@@ -147,7 +150,7 @@ export function Footer() {
 
             {/* Social */}
             <div>
-              <h3 className="text-[10px] font-bold mb-5 uppercase tracking-[0.2em] text-foreground/40">
+              <h3 className="text-[10px] font-bold mb-4 uppercase tracking-[0.2em] text-foreground/40">
                 Suivez-nous
               </h3>
               <div className="flex gap-2">
@@ -157,16 +160,16 @@ export function Footer() {
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`w-9 h-9 rounded-xl bg-muted/60 border border-border/30 flex items-center justify-center ${social.color} transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 hover:scale-105`}
+                    className={`w-8 h-8 rounded-lg bg-muted/60 border border-border/30 flex items-center justify-center ${social.color} transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 hover:scale-105`}
                     aria-label={social.label}
                   >
                     <social.icon className="h-3.5 w-3.5" />
                   </a>
                 ))}
               </div>
-              <div className="mt-8 p-4 rounded-2xl bg-muted/30 border border-border/30">
-                <p className="text-[12px] text-foreground/70 font-semibold mb-1">Newsletter</p>
-                <p className="text-[11px] text-muted-foreground/60 leading-relaxed">
+              <div className="mt-6 p-3.5 rounded-xl bg-muted/30 border border-border/30">
+                <p className="text-[11.5px] text-foreground/70 font-semibold mb-1">Newsletter</p>
+                <p className="text-[10.5px] text-muted-foreground/60 leading-relaxed">
                   Inscrivez-vous pour recevoir les dernières nouvelles
                   directement dans votre boîte de réception.
                 </p>
@@ -174,9 +177,9 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Bottom */}
-          <Separator className="my-8 bg-border/40" />
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-[10.5px] text-muted-foreground/50">
+          {/* Bottom bar */}
+          <Separator className="my-6 bg-border/40" />
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-[10.5px] text-muted-foreground/50">
             <p className="flex items-center gap-1.5">
               © {new Date().getFullYear()} Capitale Infos. Tous droits réservés.
               <span className="hidden sm:inline">Fait avec</span>

@@ -92,7 +92,7 @@ export function TrendingSidebar({ onArticleClick }: TrendingSidebarProps) {
         transition={{ duration: 0.5 }}
       >
         <Card className="border-border/40 overflow-hidden rounded-2xl shadow-sm bg-card/80 backdrop-blur-sm">
-          <CardHeader className="relative overflow-hidden pb-3 pt-4 px-5 bg-gradient-to-r from-primary to-primary/85 text-white">
+          <CardHeader className="relative overflow-hidden pb-3 pt-4 px-5 bg-gradient-to-r from-foreground to-foreground/90 text-white">
             {/* Decorative */}
             <div className="absolute -top-4 -right-4 w-20 h-20 rounded-full bg-white/5" />
             <div className="absolute -bottom-6 -right-8 w-24 h-24 rounded-full bg-white/[0.03]" />
@@ -101,7 +101,7 @@ export function TrendingSidebar({ onArticleClick }: TrendingSidebarProps) {
               <div className="h-7 w-7 rounded-lg bg-white/15 flex items-center justify-center">
                 <Flame className="h-3.5 w-3.5" />
               </div>
-              Les plus lus
+              <span>LES PLUS LUS <span className="text-primary font-black tracking-wider">{'///'}</span></span>
             </CardTitle>
           </CardHeader>
           <CardContent className="p-2">

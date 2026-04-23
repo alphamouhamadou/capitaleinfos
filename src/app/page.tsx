@@ -42,19 +42,28 @@ export default function Home() {
       <BreakingNews />
 
       <main className="flex-1">
-        <HeroSection onArticleClick={handleArticleClick} />
+        {/* ── Hero — full-width with centered content ── */}
+        <div className="w-full">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <HeroSection onArticleClick={handleArticleClick} />
+          </div>
+        </div>
 
         <div className="section-divider mx-auto max-w-7xl" />
 
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* ── Main content grid: articles + sidebar ── */}
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
-            <div className="lg:col-span-8">
+            {/* Left column — articles */}
+            <div className="lg:col-span-8 space-y-0">
               <LatestNews onArticleClick={handleArticleClick} />
               <div className="section-divider my-0" />
               <CategorySection onArticleClick={handleArticleClick} />
               <div className="section-divider my-0" />
               <OpinionSection onArticleClick={handleArticleClick} />
             </div>
+
+            {/* Right column — sidebar */}
             <div className="lg:col-span-4">
               <div className="lg:sticky lg:top-24 space-y-5">
                 <TrendingSidebar onArticleClick={handleArticleClick} />
@@ -68,9 +77,10 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="section-divider mx-auto max-w-7xl mt-4" />
+        <div className="section-divider mx-auto max-w-7xl" />
 
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* ── Newsletter section ── */}
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
           <NewsletterSection />
         </div>
       </main>

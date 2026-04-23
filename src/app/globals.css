@@ -333,3 +333,78 @@ html {
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   ARTICLE TYPOGRAPHY — Drop Cap
+   ═══════════════════════════════════════════════════════════════════════ */
+.drop-cap-paragraph::first-letter {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-weight: 800;
+  font-size: 3.5em;
+  line-height: 0.8;
+  float: left;
+  margin-right: 0.08em;
+  margin-top: 0.05em;
+  color: oklch(0.5 0.19 22);
+}
+.dark .drop-cap-paragraph::first-letter {
+  color: oklch(0.72 0.14 85);
+}
+
+/* Hyphenation for justified text */
+.hyphens-auto {
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  hyphens: auto;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   ARTICLE DIALOG — Full-page overlay
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Override dialog overlay for full-bleed article reader */
+.article-dialog-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 100 !important;
+  background: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+}
+
+.article-dialog-content {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 101 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100dvh !important;
+  max-height: 100dvh !important;
+  border-radius: 0 !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  animation: none !important;
+  transform: none !important;
+  scale: 1 !important;
+  translate: 0 0 !important;
+}
+
+/* Premium article scrollbar inside dialog */
+.article-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.article-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.article-scroll::-webkit-scrollbar-thumb {
+  background: oklch(0.78 0.03 25 / 0.4);
+  border-radius: 100px;
+}
+.article-scroll::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.55 0.15 25 / 0.6);
+}
+.dark .article-scroll::-webkit-scrollbar-thumb {
+  background: oklch(0.42 0.03 25 / 0.5);
+}

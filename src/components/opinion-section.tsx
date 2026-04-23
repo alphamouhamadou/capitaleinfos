@@ -24,11 +24,11 @@ export function OpinionSection({ onArticleClick }: OpinionSectionProps) {
       a.category === 'Environnement' || a.category === 'Politique'
   ).slice(0, 3);
   return (
-    <section id="opinions" className="py-8 scroll-mt-28">
+    <section id="opinions" className="py-8 scroll-mt-36">
       {/* Section header */}
       <div className="flex items-center gap-4 mb-7">
         <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-foreground/50">
-          Opinions
+          OPINIONS <span className="text-primary font-black tracking-wider">{'///'}</span>
         </h2>
         <div className="flex-1 h-px bg-gradient-to-r from-border via-border/60 to-transparent" />
       </div>
