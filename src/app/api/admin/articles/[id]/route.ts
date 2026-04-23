@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
+import { requireAdmin } from "@/lib/admin-auth";
 
 const articleSchema = z.object({
   title: z.string().min(1, "Le titre est requis"),
@@ -21,6 +22,10 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const admin = await requireAdmin();
+    if (!admin) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    }
     const { id } = await params;
     const article = await db.article.findUnique({
       where: { id },
@@ -47,6 +52,10 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const admin = await requireAdmin();
+    if (!admin) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    }
     const { id } = await params;
     const body = await request.json();
     const validated = articleSchema.parse(body);
@@ -76,6 +85,10 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const admin = await requireAdmin();
+    if (!admin) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    }
     const { id } = await params;
     await db.article.delete({
       where: { id },

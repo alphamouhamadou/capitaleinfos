@@ -11,7 +11,7 @@ import {
   ChevronRight,
   Newspaper,
   Landmark,
-  TrendingUp as TrendIcon,
+  BarChart3,
   Palette,
   Users,
   Globe,
@@ -21,7 +21,7 @@ import { Button } from '@/components/ui/button';
 const navLinks = [
   { label: 'À la une', href: '#a-la-une', action: 'scroll', icon: Newspaper },
   { label: 'Politique', href: '#rubriques', category: 'Politique', icon: Landmark },
-  { label: 'Économie', href: '#rubriques', category: 'Économie', icon: TrendIcon },
+  { label: 'Économie', href: '#rubriques', category: 'Économie', icon: BarChart3 },
   { label: 'Sport', href: '#rubriques', category: 'Sport', icon: TrendingUp },
   { label: 'Culture', href: '#rubriques', category: 'Culture', icon: Palette },
   { label: 'Société', href: '#rubriques', category: 'Société', icon: Users },
@@ -37,6 +37,11 @@ export function Header({ onSearchOpen }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [currentTime, setCurrentTime] = useState('');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -86,7 +91,26 @@ export function Header({ onSearchOpen }: HeaderProps) {
     }
   }, []);
 
-  const isDark = resolvedTheme === 'dark';
+  const isDark = mounted && resolvedTheme === 'dark';
+
+  if (!mounted) {
+    return (
+      <>
+        <div className="h-[3px] bg-gradient-to-r from-primary via-red-500 to-amber-500" />
+        <header className="sticky top-0 z-50 w-full bg-background/70 backdrop-blur-md">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between py-2 h-[88px]">
+              <div className="h-10 w-[200px] bg-muted animate-pulse rounded" />
+              <div className="flex gap-1">
+                <div className="h-8 w-8 bg-muted rounded-full" />
+                <div className="h-8 w-8 bg-muted rounded-full" />
+              </div>
+            </div>
+          </div>
+        </header>
+      </>
+    );
+  }
 
   return (
     <>
@@ -107,7 +131,7 @@ export function Header({ onSearchOpen }: HeaderProps) {
               <span className="hidden sm:block capitalize font-medium tracking-wide">
                 {currentTime}
               </span>
-              <span className="sm:hidden text-[11px] font-medium">22 Avril 2026</span>
+              <span className="sm:hidden text-[11px] font-medium">{currentTime}</span>
               <div className="flex items-center gap-1">
                 <div className="hidden sm:flex items-center gap-1.5 mr-3">
                   <TrendingUp className="h-3 w-3 text-primary/70" />

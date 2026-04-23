@@ -16,17 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Loader2, Save, ArrowLeft } from "lucide-react";
-import { categories, categoryColors } from "@/lib/data";
-import dynamic from "next/dynamic";
-
-// Dynamically import the MDX editor to avoid SSR issues
-const MDXEditor = dynamic(
-  () => import("@mdxeditor/editor").then((mod) => {
-    // Need to explicitly import the plugin as well
-    return { default: mod.MDXEditor };
-  }),
-  { ssr: false, loading: () => <div className="h-64 bg-gray-100 rounded-lg animate-pulse" /> }
-);
+import { categories } from "@/lib/data";
 
 interface ArticleFormProps {
   initialData?: {

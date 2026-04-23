@@ -2,16 +2,15 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signIn, SessionProvider } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Loader2, Shield, Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
-import type { ReactNode } from "react";
 
-function LoginForm() {
+export default function AdminLoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -147,13 +146,5 @@ function LoginForm() {
         </CardContent>
       </Card>
     </div>
-  );
-}
-
-export default function AdminLoginPage() {
-  return (
-    <SessionProvider>
-      <LoginForm />
-    </SessionProvider>
   );
 }

@@ -48,7 +48,7 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/admin/login",
   },
-  secret: "capitale-infos-admin-secret-key-2026-senegal-news-portal",
+  secret: process.env.NEXTAUTH_SECRET || "capitale-infos-admin-secret-key-2026-senegal-news-portal",
   callbacks: {
     async jwt({ token, user }) {
       if (user) {

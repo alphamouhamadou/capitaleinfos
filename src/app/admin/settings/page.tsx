@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,8 +17,15 @@ export default function AdminSettingsPage() {
   const [passwordSuccess, setPasswordSuccess] = useState(false);
 
   const [nameForm, setNameForm] = useState({
-    name: session?.user?.name || "",
+    name: "",
   });
+
+  // Sync name when session is available
+  useEffect(() => {
+    if (session?.user?.name) {
+      setNameForm({ name: session.user.name });
+    }
+  }, [session?.user?.name]);
 
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: "",

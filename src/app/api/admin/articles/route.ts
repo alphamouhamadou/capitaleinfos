@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
+import { requireAdmin } from "@/lib/admin-auth";
 
 const articleSchema = z.object({
   title: z.string().min(1, "Le titre est requis"),
@@ -18,6 +19,10 @@ const articleSchema = z.object({
 
 export async function GET(request: NextRequest) {
   try {
+    const admin = await requireAdmin();
+    if (!admin) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    }
     const { searchParams } = new URL(request.url);
     const category = searchParams.get("category");
     const published = searchParams.get("published");
@@ -57,6 +62,10 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const admin = await requireAdmin();
+    if (!admin) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    }
     const body = await request.json();
     const validated = articleSchema.parse(body);
 

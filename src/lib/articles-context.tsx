@@ -110,6 +110,7 @@ export function ArticlesProvider({ children }: { children: ReactNode }) {
         (a) =>
           a.title.toLowerCase().includes(lower) ||
           a.excerpt.toLowerCase().includes(lower) ||
+          a.content.toLowerCase().includes(lower) ||
           a.category.toLowerCase().includes(lower) ||
           a.author.name.toLowerCase().includes(lower)
       );

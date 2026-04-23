@@ -105,6 +105,7 @@ export default function AdminArticlesPage() {
       if (res.ok) {
         setArticles((prev) => prev.filter((a) => a.id !== deleteId));
         setDeleteId(null);
+        window.dispatchEvent(new CustomEvent("articles-refresh"));
       }
     } catch (error) {
       console.error("Failed to delete article:", error);

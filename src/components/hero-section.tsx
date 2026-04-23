@@ -64,7 +64,7 @@ export function HeroSection({ onArticleClick }: HeroSectionProps) {
         >
           <div className="relative w-full aspect-[16/9] sm:aspect-[16/8] lg:aspect-[16/8.5] overflow-hidden rounded-2xl lg:rounded-[1.75rem] shadow-2xl shadow-black/[0.08] dark:shadow-black/30">
             <Image
-              src="/img/hero-dakar.jpg"
+              src={mainArticle.image}
               alt={mainArticle.title}
               fill
               className="object-cover img-zoom"

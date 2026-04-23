@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireAdmin } from "@/lib/admin-auth";
 
 export async function GET() {
   try {
+    const admin = await requireAdmin();
+    if (!admin) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    }
     const total = await db.article.count();
     const published = await db.article.count({ where: { published: true } });
     const draft = await db.article.count({ where: { published: false } });
@@ -34,3 +39,4 @@ export async function GET() {
     );
   }
 }
+

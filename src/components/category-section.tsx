@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import { Calendar, Clock, ArrowUpRight } from 'lucide-react';
+import { Calendar, Clock, ArrowUpRight, Newspaper } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
@@ -77,6 +77,13 @@ export function CategorySection({ onArticleClick }: CategorySectionProps) {
             transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
             className="grid grid-cols-1 md:grid-cols-2 gap-5"
           >
+            {!loading && !mainArticle && (
+              <div className="col-span-full flex flex-col items-center justify-center py-12 text-muted-foreground">
+                <Newspaper className="h-10 w-10 text-muted-foreground/30 mb-3" />
+                <p className="text-sm font-medium">Aucun article dans cette rubrique.</p>
+              </div>
+            )}
+
             {/* Main article */}
             {mainArticle && (
               <motion.div
