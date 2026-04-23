@@ -83,26 +83,26 @@ export function Footer() {
       </div>
 
       {/* ── Main footer area ── */}
-      <div className="relative bg-muted/40 dark:bg-foreground/[0.03]">
+      <div className="relative bg-foreground text-white">
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-10 pb-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
             {/* Brand info */}
             <div className="sm:col-span-2 lg:col-span-1">
-              <p className="text-[12px] text-muted-foreground/70 leading-relaxed mb-4">
+              <p className="text-[12px] text-white/55 leading-relaxed mb-4">
                 Capitale Infos couvre l&apos;actualité politique, économique,
                 sportive, culturelle et sociale avec rigueur et indépendance.
               </p>
-              <div className="space-y-1.5 text-[11px] text-muted-foreground/50">
+              <div className="space-y-1.5 text-[11px] text-white/40">
                 <div className="flex items-center gap-2">
-                  <MapPin className="h-3 w-3 text-primary/50" />
+                  <MapPin className="h-3 w-3 text-primary" />
                   <span>Dakar, Sénégal</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Phone className="h-3 w-3 text-primary/50" />
+                  <Phone className="h-3 w-3 text-primary" />
                   <span>+221 33 800 00 00</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Mail className="h-3 w-3 text-primary/50" />
+                  <Mail className="h-3 w-3 text-primary" />
                   <span>contact@capitaleinfos.sn</span>
                 </div>
               </div>
@@ -110,7 +110,7 @@ export function Footer() {
 
             {/* Categories */}
             <div>
-              <h3 className="text-[10px] font-bold mb-4 uppercase tracking-[0.2em] text-foreground/40">
+              <h3 className="text-[10px] font-bold mb-4 uppercase tracking-[0.2em] text-white/35">
                 Rubriques
               </h3>
               <ul className="space-y-2">
@@ -118,7 +118,7 @@ export function Footer() {
                   <li key={link}>
                     <button
                       onClick={() => handleCategoryClick(link)}
-                      className="text-[12px] text-muted-foreground/60 hover:text-primary transition-colors duration-300 flex items-center gap-2 group"
+                      className="text-[12px] text-white/50 hover:text-primary transition-colors duration-300 flex items-center gap-2 group"
                     >
                       <span className="h-0.5 w-0.5 rounded-full bg-primary/30 group-hover:bg-primary group-hover:w-1 group-hover:h-1 transition-all duration-300" />
                       {link}
@@ -130,7 +130,7 @@ export function Footer() {
 
             {/* Info */}
             <div>
-              <h3 className="text-[10px] font-bold mb-4 uppercase tracking-[0.2em] text-foreground/40">
+              <h3 className="text-[10px] font-bold mb-4 uppercase tracking-[0.2em] text-white/35">
                 Informations
               </h3>
               <ul className="space-y-2">
@@ -138,7 +138,7 @@ export function Footer() {
                   <li key={link.label}>
                     <a
                       href={link.href}
-                      className="text-[12px] text-muted-foreground/60 hover:text-primary transition-colors duration-300 flex items-center gap-2 group"
+                      className="text-[12px] text-white/50 hover:text-primary transition-colors duration-300 flex items-center gap-2 group"
                     >
                       <span className="h-0.5 w-0.5 rounded-full bg-primary/30 group-hover:bg-primary group-hover:w-1 group-hover:h-1 transition-all duration-300" />
                       {link.label}
@@ -150,7 +150,7 @@ export function Footer() {
 
             {/* Social */}
             <div>
-              <h3 className="text-[10px] font-bold mb-4 uppercase tracking-[0.2em] text-foreground/40">
+              <h3 className="text-[10px] font-bold mb-4 uppercase tracking-[0.2em] text-white/35">
                 Suivez-nous
               </h3>
               <div className="flex gap-2">
@@ -160,16 +160,16 @@ export function Footer() {
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`w-8 h-8 rounded-lg bg-muted/60 border border-border/30 flex items-center justify-center ${social.color} transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 hover:scale-105`}
+                    className={`w-8 h-8 rounded-lg bg-white/10 border border-white/10 flex items-center justify-center text-white/60 ${social.color} hover:text-white transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 hover:scale-105`}
                     aria-label={social.label}
                   >
                     <social.icon className="h-3.5 w-3.5" />
                   </a>
                 ))}
               </div>
-              <div className="mt-6 p-3.5 rounded-xl bg-muted/30 border border-border/30">
-                <p className="text-[11.5px] text-foreground/70 font-semibold mb-1">Newsletter</p>
-                <p className="text-[10.5px] text-muted-foreground/60 leading-relaxed">
+              <div className="mt-6 p-3.5 rounded-xl bg-white/5 border border-white/10">
+                <p className="text-[11.5px] text-white/70 font-semibold mb-1">Newsletter</p>
+                <p className="text-[10.5px] text-white/40 leading-relaxed">
                   Inscrivez-vous pour recevoir les dernières nouvelles
                   directement dans votre boîte de réception.
                 </p>
@@ -178,18 +178,18 @@ export function Footer() {
           </div>
 
           {/* Bottom bar */}
-          <Separator className="my-6 bg-border/40" />
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-[10.5px] text-muted-foreground/50">
+          <Separator className="my-6 bg-white/10" />
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-[10.5px] text-white/35">
             <p className="flex items-center gap-1.5">
               © {new Date().getFullYear()} Capitale Infos. Tous droits réservés.
               <span className="hidden sm:inline">Fait avec</span>
-              <Heart className="h-2.5 w-2.5 text-primary/60 hidden sm:inline" />
+              <Heart className="h-2.5 w-2.5 text-primary hidden sm:inline" />
               <span className="hidden sm:inline">à Dakar</span>
             </p>
             <div className="flex items-center gap-4">
-              <a href="#" className="hover:text-foreground/70 transition-colors">Mentions légales</a>
-              <a href="#" className="hover:text-foreground/70 transition-colors">Confidentialité</a>
-              <a href="#" className="hover:text-foreground/70 transition-colors">Cookies</a>
+              <a href="#" className="hover:text-white/70 transition-colors">Mentions légales</a>
+              <a href="#" className="hover:text-white/70 transition-colors">Confidentialité</a>
+              <a href="#" className="hover:text-white/70 transition-colors">Cookies</a>
             </div>
           </div>
         </div>

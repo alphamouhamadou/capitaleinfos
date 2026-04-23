@@ -464,7 +464,7 @@ export function ArticleDialog({
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent
         showCloseButton={false}
-        className="fixed inset-0 z-50 flex flex-col w-full h-full max-w-none m-0 p-0 border-0 rounded-none bg-background translate-x-0 translate-y-0 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:slide-out-to-bottom-2 data-[state=open]:slide-in-from-bottom-2 sm:rounded-none overflow-hidden"
+        className="!fixed !inset-0 !left-0 !top-0 z-50 flex flex-col w-full h-full !max-w-none !m-0 !p-0 !border-0 !rounded-none bg-background !translate-x-0 !translate-y-0 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 overflow-hidden"
       >
         <DialogTitle className="sr-only">
           {article.title}
