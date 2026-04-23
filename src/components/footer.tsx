@@ -32,11 +32,8 @@ const infoLinks = [
 ];
 
 const socialLinks = [
-  { icon: Facebook, label: 'Facebook', href: 'https://facebook.com/capitaleinfos', color: 'hover:bg-blue-600' },
-  { icon: Twitter, label: 'Twitter', href: 'https://twitter.com/capitaleinfos', color: 'hover:bg-sky-500' },
-  { icon: Instagram, label: 'Instagram', href: 'https://instagram.com/capitaleinfos', color: 'hover:bg-pink-600' },
-  { icon: Youtube, label: 'YouTube', href: 'https://youtube.com/@capitaleinfos', color: 'hover:bg-red-600' },
-  { icon: Rss, label: 'RSS', href: '#', color: 'hover:bg-amber-500' },
+  { icon: Facebook, label: 'Facebook', href: 'https://www.facebook.com/profile.php?id=100092013974494', color: 'hover:bg-blue-600' },
+  
 ];
 
 export function Footer() {
@@ -99,11 +96,11 @@ export function Footer() {
                 </div>
                 <div className="flex items-center gap-2">
                   <Phone className="h-3 w-3 text-primary" />
-                  <span>+221 33 800 00 00</span>
+                  <span>+221 77 814 19 04</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Mail className="h-3 w-3 text-primary" />
-                  <span>contact@capitaleinfos.sn</span>
+                  <span>contact@capitaleinfos.com</span>
                 </div>
               </div>
             </div>
