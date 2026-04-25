@@ -87,7 +87,7 @@ function SidebarContent() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                className={`flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium transition-all touch-manipulation ${
                   isActive
                     ? "bg-red-600 text-white shadow-md"
                     : "text-muted-foreground hover:bg-accent hover:text-foreground"
@@ -118,7 +118,7 @@ function SidebarContent() {
         )}
         <button
           onClick={() => signOut({ callbackUrl: "/admin/login" })}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-red-50 hover:text-red-600 transition-all w-full"
+          className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:bg-red-50 hover:text-red-600 transition-all w-full touch-manipulation"
         >
           <LogOut className="h-4 w-4" />
           Déconnexion
@@ -172,7 +172,7 @@ function AdminLayoutInner({ children }: { children: ReactNode }) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="lg:hidden mr-3"
+                className="lg:hidden mr-3 h-11 w-11"
               >
                 <Menu className="h-5 w-5" />
               </Button>
