@@ -9,6 +9,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import { Loader2, Save, ArrowLeft, Upload, Image as ImageIcon, Link, X } from "lucide-react";
 import { categories } from "@/lib/data";
 
@@ -56,12 +64,14 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Validate type
     const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml"];
     if (!allowedTypes.includes(file.type)) {
       setError("Type de fichier non autorisé. Utilisez JPG, PNG, GIF ou WebP.");
       return;
     }
 
+    // Validate size
     if (file.size > 5 * 1024 * 1024) {
       setError("L'image est trop volumineuse. Taille maximale : 5 Mo.");
       return;
@@ -70,6 +80,7 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
     setUploading(true);
     setError("");
 
+    // Show local preview immediately
     const reader = new FileReader();
     reader.onloadend = () => {
       setImagePreview(reader.result as string);
@@ -99,6 +110,7 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
       setImagePreview("");
     } finally {
       setUploading(false);
+      // Reset file input
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
@@ -154,28 +166,26 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 pb-28 lg:pb-6">
+    <form onSubmit={handleSubmit} className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2 min-w-0">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
           <Button
             type="button"
             variant="ghost"
             size="icon"
-            className="shrink-0 h-12 w-12"
             onClick={() => router.back()}
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-lg sm:text-2xl font-bold text-gray-900 truncate">
+          <h1 className="text-2xl font-bold text-gray-900">
             {isEdit ? "Modifier l'article" : "Nouvel article"}
           </h1>
         </div>
-        {/* Desktop publish button */}
         <Button
           type="submit"
           disabled={loading || uploading}
-          className="hidden lg:flex bg-red-600 hover:bg-red-700 text-white shadow-md h-12 px-6"
+          className="bg-red-600 hover:bg-red-700 text-white shadow-md"
         >
           {loading ? (
             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -187,17 +197,17 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg p-4">
+        <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg p-3">
           {error}
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main content */}
-        <div className="lg:col-span-2 space-y-4 lg:space-y-6">
+        <div className="lg:col-span-2 space-y-6">
           {/* Title */}
           <Card className="border-0 shadow-sm">
-            <CardContent className="p-4 lg:p-6 space-y-4">
+            <CardContent className="p-6 space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="title" className="text-sm font-medium">
                   Titre de l&apos;article *
@@ -208,11 +218,10 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
                   value={formData.title}
                   onChange={(e) => updateField("title", e.target.value)}
                   required
-                  className="text-base sm:text-lg h-12"
+                  className="text-lg h-12"
                 />
               </div>
 
-              {/* Excerpt — optionnel */}
               <div className="space-y-2">
                 <Label htmlFor="excerpt" className="text-sm font-medium">
                   Résumé
@@ -223,22 +232,20 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
                   value={formData.excerpt}
                   onChange={(e) => updateField("excerpt", e.target.value)}
                   rows={3}
-                  className="text-base"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="content" className="text-sm font-medium">
+                <Label className="text-sm font-medium">
                   Contenu *
                 </Label>
-                <div className="min-h-[200px] sm:min-h-[300px] border rounded-lg overflow-hidden">
+                <div className="min-h-[300px] border rounded-lg overflow-hidden">
                   <textarea
-                    id="content"
                     placeholder="Saisissez le contenu de l'article en Markdown..."
                     value={formData.content}
                     onChange={(e) => updateField("content", e.target.value)}
                     required
-                    className="w-full min-h-[200px] sm:min-h-[300px] p-4 text-sm sm:text-base resize-y focus:outline-none"
+                    className="w-full min-h-[300px] p-4 text-sm resize-y focus:outline-none"
                   />
                 </div>
               </div>
@@ -247,7 +254,7 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
         </div>
 
         {/* Sidebar */}
-        <div className="space-y-4 lg:space-y-6">
+        <div className="space-y-6">
           {/* Publishing */}
           <Card className="border-0 shadow-sm">
             <CardHeader className="pb-3">
@@ -255,7 +262,7 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
                 Publication
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-5">
+            <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <Label htmlFor="published" className="text-sm">
                   Publié
@@ -295,7 +302,7 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
             </CardContent>
           </Card>
 
-          {/* Category — NATIVE SELECT */}
+          {/* Category & Meta */}
           <Card className="border-0 shadow-sm">
             <CardHeader className="pb-3">
               <CardTitle className="text-base font-semibold">
@@ -304,25 +311,41 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="category-select" className="text-sm">
-                  Catégorie *
-                </Label>
-                <select
-                  id="category-select"
+                <Label className="text-sm">Catégorie *</Label>
+                <Select
                   value={formData.category}
-                  onChange={(e) => updateField("category", e.target.value)}
-                  required
-                  className="w-full h-12 px-3 text-base bg-background border border-input rounded-md appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23888%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')] bg-[length:20px] bg-[right_12px_center] bg-no-repeat pr-10 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                  onValueChange={(value) => updateField("category", value)}
                 >
-                  <option value="" disabled>
-                    Choisir une catégorie
-                  </option>
-                  {categories.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choisir une catégorie" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((cat) => (
+                      <SelectItem key={cat} value={cat}>
+                        <span className="flex items-center gap-2">
+                          <span
+                            className={`w-2 h-2 rounded-full ${
+                              cat === "Politique"
+                                ? "bg-red-500"
+                                : cat === "Économie"
+                                ? "bg-amber-500"
+                                : cat === "Sport"
+                                ? "bg-green-500"
+                                : cat === "Culture"
+                                ? "bg-purple-500"
+                                : cat === "Société"
+                                ? "bg-teal-500"
+                                : cat === "International"
+                                ? "bg-orange-500"
+                                : "bg-emerald-500"
+                            }`}
+                          />
+                          {cat}
+                        </span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">
@@ -337,13 +360,12 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
                   onChange={(e) =>
                     updateField("readTime", parseInt(e.target.value) || 1)
                   }
-                  className="h-12"
                 />
               </div>
             </CardContent>
           </Card>
 
-          {/* Image — LABEL FOR approach (100% mobile compatible, no overlap) */}
+          {/* Image */}
           <Card className="border-0 shadow-sm">
             <CardHeader className="pb-3">
               <CardTitle className="text-base font-semibold">
@@ -351,41 +373,30 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Hidden file input */}
-              <input
-                id="article-file-upload"
-                ref={fileInputRef}
-                type="file"
-                accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml"
-                onChange={handleImageUpload}
-                disabled={uploading}
-                className="sr-only"
-              />
-
               {/* Mode toggle */}
               <div className="flex rounded-lg border overflow-hidden">
                 <button
                   type="button"
                   onClick={() => setImageMode("upload")}
-                  className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-colors ${
+                  className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-medium transition-colors ${
                     imageMode === "upload"
                       ? "bg-red-600 text-white"
                       : "bg-background text-muted-foreground hover:bg-muted"
                   }`}
                 >
-                  <Upload className="h-4 w-4" />
+                  <Upload className="h-3.5 w-3.5" />
                   Téléverser
                 </button>
                 <button
                   type="button"
                   onClick={() => setImageMode("url")}
-                  className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-colors ${
+                  className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-medium transition-colors ${
                     imageMode === "url"
                       ? "bg-red-600 text-white"
                       : "bg-background text-muted-foreground hover:bg-muted"
                   }`}
                 >
-                  <Link className="h-4 w-4" />
+                  <Link className="h-3.5 w-3.5" />
                   URL
                 </button>
               </div>
@@ -404,51 +415,48 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
                   <button
                     type="button"
                     onClick={removeImage}
-                    className="absolute top-2 right-2 h-10 w-10 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center transition-colors"
+                    className="absolute top-2 right-2 h-7 w-7 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center transition-colors"
                   >
-                    <X className="h-4 w-4" />
+                    <X className="h-3.5 w-3.5" />
                   </button>
                 </div>
               )}
 
-              {/* Upload mode — LABEL pointing to hidden input */}
-              {imageMode === "upload" && !imagePreview && (
-                <label
-                  htmlFor="article-file-upload"
-                  className={`flex flex-col items-center justify-center gap-2 w-full h-28 rounded-lg border-2 border-dashed cursor-pointer transition-colors ${
-                    uploading
-                      ? "opacity-50 pointer-events-none border-muted"
-                      : "border-muted-foreground/25 hover:border-primary/50 text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {uploading ? (
-                    <>
-                      <Loader2 className="h-8 w-8 animate-spin text-red-500" />
-                      <span className="text-sm font-medium">Téléversement en cours...</span>
-                    </>
-                  ) : (
-                    <>
-                      <ImageIcon className="h-8 w-8" />
-                      <span className="text-sm font-medium">
-                        Appuyer pour sélectionner
-                      </span>
-                      <span className="text-xs text-muted-foreground/60">
-                        JPG, PNG, GIF, WebP — Max 5 Mo
-                      </span>
-                    </>
-                  )}
-                </label>
-              )}
-
-              {/* Show another upload button if already has preview */}
-              {imageMode === "upload" && imagePreview && (
-                <label
-                  htmlFor="article-file-upload"
-                  className="flex items-center justify-center gap-2 w-full py-3 rounded-lg border cursor-pointer hover:bg-muted/50 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <ImageIcon className="h-4 w-4" />
-                  Changer l&apos;image
-                </label>
+              {/* Upload mode */}
+              {imageMode === "upload" && (
+                <div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full h-24 border-dashed flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-foreground hover:border-primary/50 transition-colors"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading}
+                  >
+                    {uploading ? (
+                      <>
+                        <Loader2 className="h-6 w-6 animate-spin" />
+                        <span className="text-xs">Téléversement en cours...</span>
+                      </>
+                    ) : (
+                      <>
+                        <ImageIcon className="h-6 w-6" />
+                        <span className="text-xs font-medium">
+                          Cliquer pour sélectionner une image
+                        </span>
+                        <span className="text-[10px] text-muted-foreground/60">
+                          JPG, PNG, GIF, WebP — Max 5 Mo
+                        </span>
+                      </>
+                    )}
+                  </Button>
+                </div>
               )}
 
               {/* URL mode */}
@@ -462,20 +470,19 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
                     placeholder="https://exemple.com/image.jpg"
                     value={imageMode === "url" && !formData.image.startsWith("/uploads/") ? formData.image : ""}
                     onChange={(e) => handleUrlChange(e.target.value)}
-                    className="h-12"
                   />
                 </div>
               )}
 
               {!imagePreview && (
-                <p className="text-xs text-muted-foreground/60 text-center">
+                <p className="text-[11px] text-muted-foreground/60 text-center">
                   Aucune image sélectionnée — une image par défaut sera utilisée
                 </p>
               )}
             </CardContent>
           </Card>
 
-          {/* Author — optionnel */}
+          {/* Author */}
           <Card className="border-0 shadow-sm">
             <CardHeader className="pb-3">
               <CardTitle className="text-base font-semibold">
@@ -492,7 +499,6 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
                   placeholder="Aminata Diallo"
                   value={formData.authorName}
                   onChange={(e) => updateField("authorName", e.target.value)}
-                  className="h-12"
                 />
               </div>
               <div className="space-y-2">
@@ -504,28 +510,11 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
                   placeholder="Rédactrice en chef"
                   value={formData.authorRole}
                   onChange={(e) => updateField("authorRole", e.target.value)}
-                  className="h-12"
                 />
               </div>
             </CardContent>
           </Card>
         </div>
-      </div>
-
-      {/* Sticky publish button for mobile */}
-      <div className="fixed bottom-0 left-0 right-0 lg:hidden bg-white/95 border-t border-border p-3 z-40" style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}>
-        <Button
-          type="submit"
-          disabled={loading || uploading}
-          className="w-full h-14 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white shadow-md text-base font-semibold"
-        >
-          {loading ? (
-            <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-          ) : (
-            <Save className="h-5 w-5 mr-2" />
-          )}
-          {isEdit ? "Enregistrer" : "Publier l'article"}
-        </Button>
       </div>
     </form>
   );
