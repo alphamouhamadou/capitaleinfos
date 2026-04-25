@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
 import { Loader2, Save, ArrowLeft, Upload, Image as ImageIcon, Link, X } from "lucide-react";
 import { categories } from "@/lib/data";
 
@@ -213,27 +212,28 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
                 />
               </div>
 
+              {/* Excerpt — optionnel */}
               <div className="space-y-2">
                 <Label htmlFor="excerpt" className="text-sm font-medium">
-                  Résumé *
+                  Résumé
                 </Label>
                 <Textarea
                   id="excerpt"
-                  placeholder="Saisissez un résumé de l'article..."
+                  placeholder="Saisissez un résumé de l'article (optionnel)..."
                   value={formData.excerpt}
                   onChange={(e) => updateField("excerpt", e.target.value)}
-                  required
                   rows={3}
                   className="text-base"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label className="text-sm font-medium">
+                <Label htmlFor="content" className="text-sm font-medium">
                   Contenu *
                 </Label>
                 <div className="min-h-[200px] sm:min-h-[300px] border rounded-lg overflow-hidden">
                   <textarea
+                    id="content"
                     placeholder="Saisissez le contenu de l'article en Markdown..."
                     value={formData.content}
                     onChange={(e) => updateField("content", e.target.value)}
@@ -295,7 +295,7 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
             </CardContent>
           </Card>
 
-          {/* Category & Meta — NATIVE SELECT for mobile compatibility */}
+          {/* Category — NATIVE SELECT */}
           <Card className="border-0 shadow-sm">
             <CardHeader className="pb-3">
               <CardTitle className="text-base font-semibold">
@@ -343,7 +343,7 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
             </CardContent>
           </Card>
 
-          {/* Image — NATIVE LABEL for mobile file picker */}
+          {/* Image — LABEL FOR approach (100% mobile compatible, no overlap) */}
           <Card className="border-0 shadow-sm">
             <CardHeader className="pb-3">
               <CardTitle className="text-base font-semibold">
@@ -351,7 +351,18 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Mode toggle — native buttons */}
+              {/* Hidden file input */}
+              <input
+                id="article-file-upload"
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml"
+                onChange={handleImageUpload}
+                disabled={uploading}
+                className="sr-only"
+              />
+
+              {/* Mode toggle */}
               <div className="flex rounded-lg border overflow-hidden">
                 <button
                   type="button"
@@ -400,39 +411,44 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
                 </div>
               )}
 
-              {/* Upload mode — NATIVE LABEL approach (works on all mobile browsers) */}
-              {imageMode === "upload" && (
-                <div className="relative">
-                  {/* Invisible file input positioned over the entire clickable area */}
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml"
-                    onChange={handleImageUpload}
-                    disabled={uploading}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                    style={{ fontSize: '999px' }}
-                  />
-                  {/* Visual area (pointer-events-none so taps pass to input) */}
-                  <div className="w-full h-28 border-dashed rounded-lg border-2 border-muted-foreground/25 flex flex-col items-center justify-center gap-2 text-muted-foreground pointer-events-none">
-                    {uploading ? (
-                      <>
-                        <Loader2 className="h-8 w-8 animate-spin text-red-500" />
-                        <span className="text-sm font-medium">Téléversement en cours...</span>
-                      </>
-                    ) : (
-                      <>
-                        <ImageIcon className="h-8 w-8" />
-                        <span className="text-sm font-medium">
-                          Appuyer pour sélectionner
-                        </span>
-                        <span className="text-xs text-muted-foreground/60">
-                          JPG, PNG, GIF, WebP — Max 5 Mo
-                        </span>
-                      </>
-                    )}
-                  </div>
-                </div>
+              {/* Upload mode — LABEL pointing to hidden input */}
+              {imageMode === "upload" && !imagePreview && (
+                <label
+                  htmlFor="article-file-upload"
+                  className={`flex flex-col items-center justify-center gap-2 w-full h-28 rounded-lg border-2 border-dashed cursor-pointer transition-colors ${
+                    uploading
+                      ? "opacity-50 pointer-events-none border-muted"
+                      : "border-muted-foreground/25 hover:border-primary/50 text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {uploading ? (
+                    <>
+                      <Loader2 className="h-8 w-8 animate-spin text-red-500" />
+                      <span className="text-sm font-medium">Téléversement en cours...</span>
+                    </>
+                  ) : (
+                    <>
+                      <ImageIcon className="h-8 w-8" />
+                      <span className="text-sm font-medium">
+                        Appuyer pour sélectionner
+                      </span>
+                      <span className="text-xs text-muted-foreground/60">
+                        JPG, PNG, GIF, WebP — Max 5 Mo
+                      </span>
+                    </>
+                  )}
+                </label>
+              )}
+
+              {/* Show another upload button if already has preview */}
+              {imageMode === "upload" && imagePreview && (
+                <label
+                  htmlFor="article-file-upload"
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-lg border cursor-pointer hover:bg-muted/50 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <ImageIcon className="h-4 w-4" />
+                  Changer l&apos;image
+                </label>
               )}
 
               {/* URL mode */}
@@ -459,7 +475,7 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
             </CardContent>
           </Card>
 
-          {/* Author */}
+          {/* Author — optionnel */}
           <Card className="border-0 shadow-sm">
             <CardHeader className="pb-3">
               <CardTitle className="text-base font-semibold">
@@ -469,27 +485,25 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="authorName" className="text-sm">
-                  Nom de l&apos;auteur *
+                  Nom de l&apos;auteur
                 </Label>
                 <Input
                   id="authorName"
                   placeholder="Aminata Diallo"
                   value={formData.authorName}
                   onChange={(e) => updateField("authorName", e.target.value)}
-                  required
                   className="h-12"
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="authorRole" className="text-sm">
-                  Rôle de l&apos;auteur *
+                  Rôle de l&apos;auteur
                 </Label>
                 <Input
                   id="authorRole"
                   placeholder="Rédactrice en chef"
                   value={formData.authorRole}
                   onChange={(e) => updateField("authorRole", e.target.value)}
-                  required
                   className="h-12"
                 />
               </div>
