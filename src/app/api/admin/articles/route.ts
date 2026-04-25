@@ -5,11 +5,11 @@ import { requireAdmin } from "@/lib/admin-auth";
 
 const articleSchema = z.object({
   title: z.string().min(1, "Le titre est requis"),
-  excerpt: z.string().min(1, "Le résumé est requis"),
+  excerpt: z.string().optional().default(""),
   content: z.string().min(1, "Le contenu est requis"),
   category: z.string().min(1, "La catégorie est requise"),
-  authorName: z.string().min(1, "Le nom de l'auteur est requis"),
-  authorRole: z.string().min(1, "Le rôle de l'auteur est requis"),
+  authorName: z.string().optional().default("Capitale Infos"),
+  authorRole: z.string().optional().default("Rédaction"),
   image: z.string().default("/img/hero-dakar.jpg"),
   readTime: z.number().int().min(1).default(3),
   isFeatured: z.boolean().default(false),
