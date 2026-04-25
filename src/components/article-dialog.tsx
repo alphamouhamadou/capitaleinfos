@@ -87,13 +87,24 @@ export function ArticleDialog({
     year: 'numeric',
   });
 
-  // Get the current page URL (works on Vercel with custom domain)
+  // Get the unique URL for this article (with hash fragment)
   const getArticleUrl = () => {
     if (typeof window !== 'undefined') {
-      return window.location.href;
+      const base = window.location.origin + window.location.pathname;
+      return `${base}#article-${article.id}`;
     }
     return '';
   };
+
+  // Update URL hash when article opens (so browser back button works)
+  useEffect(() => {
+    if (open && articleId) {
+      const hash = `#article-${articleId}`;
+      if (window.location.hash !== hash) {
+        window.history.pushState(null, '', hash);
+      }
+    }
+  }, [open, articleId]);
 
   // Web Share API — works perfectly on mobile (opens native share sheet)
   const handleNativeShare = async () => {
@@ -155,7 +166,15 @@ export function ArticleDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
+    <Dialog open={open} onOpenChange={(v) => {
+      if (!v) {
+        onClose();
+        // Clean URL hash when closing
+        if (typeof window !== 'undefined' && window.location.hash.startsWith('#article-')) {
+          window.history.back();
+        }
+      }
+    }}>
       <DialogContent
         showCloseButton={false}
         className="!fixed !top-[50%] !left-[50%] !translate-x-[-50%] !translate-y-[-50%] z-50 !flex !flex-col w-[calc(100%-2rem)] sm:!w-[680px] lg:!w-[780px] !max-h-[88vh] !rounded-2xl !border !border-border/60 !shadow-2xl !p-0 !gap-0 !overflow-hidden bg-background"
