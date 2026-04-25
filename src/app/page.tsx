@@ -35,6 +35,26 @@ export default function Home() {
     setSelectedArticleId(id);
   };
 
+  // Auto-open article from shared URL hash (#article-xxxxx)
+  useEffect(() => {
+    const checkHash = () => {
+      const hash = window.location.hash;
+      if (hash.startsWith('#article-')) {
+        const id = hash.replace('#article-', '');
+        if (id) {
+          setSelectedArticleId(id);
+        }
+      }
+    };
+
+    // Check on mount
+    checkHash();
+
+    // Check on hash change (browser back/forward)
+    window.addEventListener('hashchange', checkHash);
+    return () => window.removeEventListener('hashchange', checkHash);
+  }, []);
+
   return (
     <ArticlesProvider>
     <div className="min-h-screen flex flex-col bg-background">
