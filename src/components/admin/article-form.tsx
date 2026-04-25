@@ -9,13 +9,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Loader2, Save, ArrowLeft, Upload, Image as ImageIcon, Link, X } from "lucide-react";
 import { categories } from "@/lib/data";
@@ -64,14 +57,12 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate type
     const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml"];
     if (!allowedTypes.includes(file.type)) {
       setError("Type de fichier non autorisé. Utilisez JPG, PNG, GIF ou WebP.");
       return;
     }
 
-    // Validate size
     if (file.size > 5 * 1024 * 1024) {
       setError("L'image est trop volumineuse. Taille maximale : 5 Mo.");
       return;
@@ -80,7 +71,6 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
     setUploading(true);
     setError("");
 
-    // Show local preview immediately
     const reader = new FileReader();
     reader.onloadend = () => {
       setImagePreview(reader.result as string);
@@ -110,7 +100,6 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
       setImagePreview("");
     } finally {
       setUploading(false);
-      // Reset file input
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
@@ -166,15 +155,15 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 pb-24 lg:pb-6">
-      {/* Header - Mobile friendly: stack vertically on small screens */}
+    <form onSubmit={handleSubmit} className="space-y-4 pb-28 lg:pb-6">
+      {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2 min-w-0">
           <Button
             type="button"
             variant="ghost"
             size="icon"
-            className="shrink-0 h-11 w-11"
+            className="shrink-0 h-12 w-12"
             onClick={() => router.back()}
           >
             <ArrowLeft className="h-5 w-5" />
@@ -183,11 +172,11 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
             {isEdit ? "Modifier l'article" : "Nouvel article"}
           </h1>
         </div>
-        {/* Desktop publish button (hidden on mobile, shown in sticky footer) */}
+        {/* Desktop publish button */}
         <Button
           type="submit"
           disabled={loading || uploading}
-          className="hidden lg:flex bg-red-600 hover:bg-red-700 text-white shadow-md h-11 px-6"
+          className="hidden lg:flex bg-red-600 hover:bg-red-700 text-white shadow-md h-12 px-6"
         >
           {loading ? (
             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -306,7 +295,7 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
             </CardContent>
           </Card>
 
-          {/* Category & Meta */}
+          {/* Category & Meta — NATIVE SELECT for mobile compatibility */}
           <Card className="border-0 shadow-sm">
             <CardHeader className="pb-3">
               <CardTitle className="text-base font-semibold">
@@ -315,41 +304,25 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label className="text-sm">Catégorie *</Label>
-                <Select
+                <Label htmlFor="category-select" className="text-sm">
+                  Catégorie *
+                </Label>
+                <select
+                  id="category-select"
                   value={formData.category}
-                  onValueChange={(value) => updateField("category", value)}
+                  onChange={(e) => updateField("category", e.target.value)}
+                  required
+                  className="w-full h-12 px-3 text-base bg-background border border-input rounded-md appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23888%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')] bg-[length:20px] bg-[right_12px_center] bg-no-repeat pr-10 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                 >
-                  <SelectTrigger className="w-full h-12 text-base">
-                    <SelectValue placeholder="Choisir une catégorie" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((cat) => (
-                      <SelectItem key={cat} value={cat}>
-                        <span className="flex items-center gap-2">
-                          <span
-                            className={`w-2.5 h-2.5 rounded-full ${
-                              cat === "Politique"
-                                ? "bg-red-500"
-                                : cat === "Économie"
-                                ? "bg-amber-500"
-                                : cat === "Sport"
-                                ? "bg-green-500"
-                                : cat === "Culture"
-                                ? "bg-purple-500"
-                                : cat === "Société"
-                                ? "bg-teal-500"
-                                : cat === "International"
-                                ? "bg-orange-500"
-                                : "bg-emerald-500"
-                            }`}
-                          />
-                          {cat}
-                        </span>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  <option value="" disabled>
+                    Choisir une catégorie
+                  </option>
+                  {categories.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="space-y-2">
@@ -370,7 +343,7 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
             </CardContent>
           </Card>
 
-          {/* Image */}
+          {/* Image — NATIVE LABEL for mobile file picker */}
           <Card className="border-0 shadow-sm">
             <CardHeader className="pb-3">
               <CardTitle className="text-base font-semibold">
@@ -378,7 +351,7 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Mode toggle */}
+              {/* Mode toggle — native buttons */}
               <div className="flex rounded-lg border overflow-hidden">
                 <button
                   type="button"
@@ -420,34 +393,32 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
                   <button
                     type="button"
                     onClick={removeImage}
-                    className="absolute top-2 right-2 h-9 w-9 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center transition-colors"
+                    className="absolute top-2 right-2 h-10 w-10 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center transition-colors"
                   >
                     <X className="h-4 w-4" />
                   </button>
                 </div>
               )}
 
-              {/* Upload mode */}
+              {/* Upload mode — NATIVE LABEL approach (works on all mobile browsers) */}
               {imageMode === "upload" && (
-                <div>
+                <div className="relative">
+                  {/* Invisible file input positioned over the entire clickable area */}
                   <input
                     ref={fileInputRef}
                     type="file"
                     accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml"
                     onChange={handleImageUpload}
-                    className="hidden"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="w-full h-28 sm:h-24 border-dashed flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-foreground hover:border-primary/50 transition-colors"
-                    onClick={() => fileInputRef.current?.click()}
                     disabled={uploading}
-                  >
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    style={{ fontSize: '999px' }}
+                  />
+                  {/* Visual area (pointer-events-none so taps pass to input) */}
+                  <div className="w-full h-28 border-dashed rounded-lg border-2 border-muted-foreground/25 flex flex-col items-center justify-center gap-2 text-muted-foreground pointer-events-none">
                     {uploading ? (
                       <>
-                        <Loader2 className="h-8 w-8 animate-spin" />
-                        <span className="text-sm">Téléversement en cours...</span>
+                        <Loader2 className="h-8 w-8 animate-spin text-red-500" />
+                        <span className="text-sm font-medium">Téléversement en cours...</span>
                       </>
                     ) : (
                       <>
@@ -460,7 +431,7 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
                         </span>
                       </>
                     )}
-                  </Button>
+                  </div>
                 </div>
               )}
 
@@ -528,11 +499,11 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
       </div>
 
       {/* Sticky publish button for mobile */}
-      <div className="fixed bottom-0 left-0 right-0 lg:hidden bg-white/95 backdrop-blur-md border-t border-border p-3 z-40 shadow-lg">
+      <div className="fixed bottom-0 left-0 right-0 lg:hidden bg-white/95 border-t border-border p-3 z-40" style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}>
         <Button
           type="submit"
           disabled={loading || uploading}
-          className="w-full h-12 bg-red-600 hover:bg-red-700 text-white shadow-md text-base font-semibold"
+          className="w-full h-14 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white shadow-md text-base font-semibold"
         >
           {loading ? (
             <Loader2 className="h-5 w-5 mr-2 animate-spin" />
