@@ -15,14 +15,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -113,18 +105,18 @@ export default function AdminArticlesPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Articles</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Articles</h1>
+          <p className="text-muted-foreground mt-1 text-sm">
             Gérer vos articles publiés et brouillons
           </p>
         </div>
-        <Link href="/admin/articles/new">
-          <Button className="bg-red-600 hover:bg-red-700 text-white shadow-md">
-            <Plus className="h-4 w-4 mr-2" />
+        <Link href="/admin/articles/new" className="sm:self-start">
+          <Button className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white shadow-md h-12">
+            <Plus className="h-5 w-5 mr-2" />
             Nouvel article
           </Button>
         </Link>
@@ -132,7 +124,7 @@ export default function AdminArticlesPage() {
 
       {/* Filters */}
       <Card className="border-0 shadow-sm">
-        <CardContent className="p-4">
+        <CardContent className="p-3 sm:p-4">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -140,11 +132,11 @@ export default function AdminArticlesPage() {
                 placeholder="Rechercher un article..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9"
+                className="pl-9 h-12"
               />
             </div>
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="w-full sm:w-44">
+              <SelectTrigger className="w-full sm:w-44 h-12">
                 <SelectValue placeholder="Catégorie" />
               </SelectTrigger>
               <SelectContent>
@@ -157,7 +149,7 @@ export default function AdminArticlesPage() {
               </SelectContent>
             </Select>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full sm:w-36">
+              <SelectTrigger className="w-full sm:w-36 h-12">
                 <SelectValue placeholder="Statut" />
               </SelectTrigger>
               <SelectContent>
@@ -170,28 +162,28 @@ export default function AdminArticlesPage() {
         </CardContent>
       </Card>
 
-      {/* Articles table */}
-      <Card className="border-0 shadow-sm">
+      {/* Articles - Desktop Table */}
+      <Card className="border-0 shadow-sm hidden md:block">
         <CardContent className="p-0">
           {loading ? (
             <div className="flex items-center justify-center h-64">
               <Loader2 className="h-8 w-8 animate-spin text-red-600" />
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="pl-4">Titre</TableHead>
-                  <TableHead className="hidden md:table-cell">Auteur</TableHead>
-                  <TableHead className="hidden sm:table-cell">Catégorie</TableHead>
-                  <TableHead className="hidden lg:table-cell">Statut</TableHead>
-                  <TableHead className="text-right pr-4">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+            <table className="w-full">
+              <thead>
+                <tr className="border-b">
+                  <th className="pl-4 py-3 text-left text-sm font-medium text-muted-foreground">Titre</th>
+                  <th className="hidden lg:table-cell py-3 text-left text-sm font-medium text-muted-foreground">Auteur</th>
+                  <th className="hidden sm:table-cell py-3 text-left text-sm font-medium text-muted-foreground">Catégorie</th>
+                  <th className="hidden lg:table-cell py-3 text-left text-sm font-medium text-muted-foreground">Statut</th>
+                  <th className="text-right pr-4 py-3 text-sm font-medium text-muted-foreground">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
                 {articles.map((article) => (
-                  <TableRow key={article.id}>
-                    <TableCell className="pl-4 max-w-sm">
+                  <tr key={article.id} className="border-b last:border-0 hover:bg-muted/30 cursor-pointer transition-colors" onClick={() => router.push(`/admin/articles/${article.id}/edit`)}>
+                    <td className="pl-4 py-3 max-w-sm">
                       <div>
                         <p className="font-medium truncate max-w-xs">
                           {article.title}
@@ -204,11 +196,11 @@ export default function AdminArticlesPage() {
                           )}
                         </p>
                       </div>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
+                    </td>
+                    <td className="hidden lg:table-cell text-sm text-muted-foreground">
                       {article.authorName}
-                    </TableCell>
-                    <TableCell className="hidden sm:table-cell">
+                    </td>
+                    <td className="hidden sm:table-cell">
                       <Badge
                         variant="secondary"
                         className={
@@ -219,8 +211,8 @@ export default function AdminArticlesPage() {
                       >
                         {article.category}
                       </Badge>
-                    </TableCell>
-                    <TableCell className="hidden lg:table-cell">
+                    </td>
+                    <td className="hidden lg:table-cell">
                       <div className="flex gap-1 flex-wrap">
                         <Badge
                           variant="secondary"
@@ -238,61 +230,157 @@ export default function AdminArticlesPage() {
                           </Badge>
                         )}
                       </div>
-                    </TableCell>
-                    <TableCell className="text-right pr-4">
+                    </td>
+                    <td className="text-right pr-4">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="h-4 w-4" />
+                          <Button variant="ghost" size="icon" className="h-10 w-10" onClick={(e) => e.stopPropagation()}>
+                            <MoreHorizontal className="h-5 w-5" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem
-                            onClick={() =>
-                              router.push(
-                                `/admin/articles/${article.id}/edit`
-                              )
-                            }
+                            className="py-3 cursor-pointer"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              router.push(`/admin/articles/${article.id}/edit`);
+                            }}
                           >
                             <Pencil className="h-4 w-4 mr-2" />
                             Modifier
                           </DropdownMenuItem>
                           <DropdownMenuItem
-                            onClick={() => setDeleteId(article.id)}
-                            className="text-red-600 focus:text-red-600"
+                            className="py-3 text-red-600 focus:text-red-600 cursor-pointer"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setDeleteId(article.id);
+                            }}
                           >
                             <Trash2 className="h-4 w-4 mr-2" />
                             Supprimer
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
+                    </td>
+                  </tr>
                 ))}
                 {!articles.length && !loading && (
-                  <TableRow>
-                    <TableCell
-                      colSpan={5}
-                      className="text-center py-12 text-muted-foreground"
-                    >
+                  <tr>
+                    <td colSpan={5} className="text-center py-12 text-muted-foreground">
                       <FileText className="h-12 w-12 mx-auto mb-3 text-muted-foreground/30" />
                       <p>Aucun article trouvé</p>
                       <Link href="/admin/articles/new">
-                        <Button
-                          variant="link"
-                          className="text-red-600 mt-2"
-                        >
+                        <Button variant="link" className="text-red-600 mt-2">
                           Créer votre premier article
                         </Button>
                       </Link>
-                    </TableCell>
-                  </TableRow>
+                    </td>
+                  </tr>
                 )}
-              </TableBody>
-            </Table>
+              </tbody>
+            </table>
           )}
         </CardContent>
       </Card>
+
+      {/* Articles - Mobile Cards */}
+      <div className="md:hidden space-y-3">
+        {loading ? (
+          <div className="flex items-center justify-center h-64">
+            <Loader2 className="h-8 w-8 animate-spin text-red-600" />
+          </div>
+        ) : articles.length === 0 ? (
+          <Card className="border-0 shadow-sm">
+            <CardContent className="text-center py-12 text-muted-foreground">
+              <FileText className="h-12 w-12 mx-auto mb-3 text-muted-foreground/30" />
+              <p>Aucun article trouvé</p>
+              <Link href="/admin/articles/new">
+                <Button variant="link" className="text-red-600 mt-2">
+                  Créer votre premier article
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        ) : (
+          articles.map((article) => (
+            <Card
+              key={article.id}
+              className="border-0 shadow-sm active:scale-[0.98] transition-transform cursor-pointer"
+              onClick={() => router.push(`/admin/articles/${article.id}/edit`)}
+            >
+              <CardContent className="p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1 min-w-0">
+                    {/* Badges */}
+                    <div className="flex items-center gap-1.5 mb-2 flex-wrap">
+                      <Badge
+                        variant="secondary"
+                        className={
+                          categoryColors[
+                            article.category as keyof typeof categoryColors
+                          ] || ""
+                        }
+                      >
+                        {article.category}
+                      </Badge>
+                      <Badge
+                        variant="secondary"
+                        className={
+                          article.published
+                            ? "bg-green-100 text-green-700 hover:bg-green-100 text-[10px] px-1.5"
+                            : "bg-amber-100 text-amber-700 hover:bg-amber-100 text-[10px] px-1.5"
+                        }
+                      >
+                        {article.published ? "Publié" : "Brouillon"}
+                      </Badge>
+                      {article.isFeatured && (
+                        <Badge className="bg-red-100 text-red-700 hover:bg-red-100 text-[10px] px-1.5">
+                          À la une
+                        </Badge>
+                      )}
+                    </div>
+                    {/* Title */}
+                    <h3 className="font-semibold text-gray-900 text-sm leading-snug line-clamp-2">
+                      {article.title}
+                    </h3>
+                    {/* Meta */}
+                    <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
+                      <span>{article.authorName}</span>
+                      <span className="h-1 w-1 rounded-full bg-muted-foreground/40" />
+                      <span>
+                        {format(new Date(article.createdAt), "dd MMM yyyy", {
+                          locale: fr,
+                        })}
+                      </span>
+                    </div>
+                  </div>
+                  {/* Action buttons */}
+                  <div className="flex flex-col gap-1 shrink-0">
+                    <button
+                      className="h-10 w-10 flex items-center justify-center rounded-lg bg-muted/50 hover:bg-muted transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/admin/articles/${article.id}/edit`);
+                      }}
+                    >
+                      <Pencil className="h-4 w-4 text-gray-600" />
+                    </button>
+                    <button
+                      className="h-10 w-10 flex items-center justify-center rounded-lg bg-red-50 hover:bg-red-100 transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDeleteId(article.id);
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4 text-red-500" />
+                    </button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
 
       {/* Delete confirmation dialog */}
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
@@ -305,10 +393,10 @@ export default function AdminArticlesPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogCancel className="h-11">Annuler</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-red-600 hover:bg-red-700 h-11"
             >
               Supprimer
             </AlertDialogAction>
