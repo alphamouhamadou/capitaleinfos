@@ -6,7 +6,7 @@ import { Calendar, Clock, ArrowUpRight, ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { categoryColors } from '@/lib/data';
+import { getCategoryColor } from '@/lib/category-utils';
 import { useArticles } from '@/lib/articles-context';
 
 interface LatestNewsProps {
@@ -58,7 +58,7 @@ export function LatestNews({ onArticleClick }: LatestNewsProps) {
           initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] as const }}
           className="flex items-center gap-4"
         >
           {/* Triple-slash accent bar */}
@@ -74,7 +74,7 @@ export function LatestNews({ onArticleClick }: LatestNewsProps) {
           initial={{ opacity: 0, x: 20 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] as const, delay: 0.1 }}
           className="hidden sm:block"
         >
           <Button
@@ -105,7 +105,7 @@ export function LatestNews({ onArticleClick }: LatestNewsProps) {
             transition={{
               duration: 0.55,
               delay: index * 0.08,
-              ease: [0.22, 1, 0.36, 1],
+              ease: [0.22, 1, 0.36, 1] as const,
             }}
           >
             <Card
@@ -129,7 +129,7 @@ export function LatestNews({ onArticleClick }: LatestNewsProps) {
                 {/* Category badge – overlaid on image */}
                 <div className="absolute top-3 left-3">
                   <Badge
-                    className={`${categoryColors[article.category]} border-0 text-[10px] font-bold px-2.5 py-0.5 shadow-md uppercase tracking-wide`}
+                    className={`${getCategoryColor(article.category)} border-0 text-[10px] font-bold px-2.5 py-0.5 shadow-md uppercase tracking-wide`}
                   >
                     {article.category}
                   </Badge>
@@ -178,7 +178,7 @@ export function LatestNews({ onArticleClick }: LatestNewsProps) {
         initial={{ opacity: 0, y: 15 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.45, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.45, delay: 0.3, ease: [0.22, 1, 0.36, 1] as const }}
         className="flex justify-center mt-8 sm:hidden"
       >
         <Button
