@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, Save, ArrowLeft, Upload, ImageIcon, X, Plus, Trash2 } from "lucide-react";
+import { Loader2, Save, ArrowLeft, Upload, X } from "lucide-react";
 import { categories } from "@/lib/category-utils";
 
 interface ArticleFormProps {
@@ -108,6 +107,7 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading || uploading) return;
     setError("");
     setLoading(true);
 
@@ -139,40 +139,36 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col min-h-[calc(100vh-8rem)]">
-      {/* ── Error banner ── */}
+    <form onSubmit={handleSubmit} className="pb-20 sm:pb-0">
+      {/* ── Error ── */}
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg p-3 mb-4">
           {error}
         </div>
       )}
 
-      {/* ── FIELDS ── */}
-      <div className="flex-1 space-y-5 pb-24 lg:pb-4">
+      <div className="space-y-5">
 
         {/* 1 ─ Titre */}
         <div className="space-y-2">
-          <Label htmlFor="title" className="text-sm font-semibold">
-            Titre *
-          </Label>
+          <Label htmlFor="f-title" className="text-sm font-semibold">Titre *</Label>
           <Input
-            id="title"
-            placeholder="Saisissez le titre de l'article..."
+            id="f-title"
+            placeholder="Titre de l'article..."
             value={formData.title}
             onChange={(e) => updateField("title", e.target.value)}
             required
             className="text-lg h-12"
+            autoComplete="off"
           />
         </div>
 
         {/* 2 ─ Résumé */}
         <div className="space-y-2">
-          <Label htmlFor="excerpt" className="text-sm font-semibold">
-            Résumé
-          </Label>
+          <Label htmlFor="f-excerpt" className="text-sm font-semibold">Résumé</Label>
           <Textarea
-            id="excerpt"
-            placeholder="Un court résumé de l'article (optionnel)..."
+            id="f-excerpt"
+            placeholder="Court résumé (optionnel)..."
             value={formData.excerpt}
             onChange={(e) => updateField("excerpt", e.target.value)}
             rows={2}
@@ -181,30 +177,30 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
 
         {/* 3 ─ Contenu */}
         <div className="space-y-2">
-          <Label className="text-sm font-semibold">Contenu *</Label>
-          <Textarea
-            placeholder="Saisissez le contenu de l'article..."
+          <Label htmlFor="f-content" className="text-sm font-semibold">Contenu *</Label>
+          <textarea
+            id="f-content"
+            placeholder="Contenu de l'article..."
             value={formData.content}
             onChange={(e) => updateField("content", e.target.value)}
             required
             rows={12}
-            className="min-h-[200px] lg:min-h-[350px]"
+            className="w-full min-h-[200px] rounded-lg border border-input bg-background px-3 py-2 text-sm font-mono resize-y focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           />
         </div>
 
         {/* 4 ─ Image */}
         <div className="space-y-3">
-          <Label className="text-sm font-semibold">Image de l'article</Label>
+          <Label className="text-sm font-semibold">Image</Label>
 
-          {/* Preview */}
           {imagePreview && (
-            <div className="relative aspect-video w-full max-w-md rounded-xl overflow-hidden border border-border/50">
+            <div className="relative aspect-video w-full max-w-sm rounded-xl overflow-hidden border border-border/50">
               <Image
                 src={imagePreview}
                 alt="Aperçu"
                 fill
                 className="object-cover"
-                sizes="500px"
+                sizes="400px"
                 unoptimized
               />
               <button
@@ -217,15 +213,12 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
             </div>
           )}
 
-          {/* Upload toggle */}
           <div className="flex rounded-lg border overflow-hidden w-fit">
             <button
               type="button"
               onClick={() => setImageMode("upload")}
-              className={`px-4 py-2 text-xs font-semibold transition-colors ${
-                imageMode === "upload"
-                  ? "bg-red-600 text-white"
-                  : "bg-background text-muted-foreground"
+              className={`px-4 py-2 text-xs font-semibold ${
+                imageMode === "upload" ? "bg-red-600 text-white" : "bg-background text-muted-foreground"
               }`}
             >
               Téléverser
@@ -233,41 +226,32 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
             <button
               type="button"
               onClick={() => setImageMode("url")}
-              className={`px-4 py-2 text-xs font-semibold transition-colors ${
-                imageMode === "url"
-                  ? "bg-red-600 text-white"
-                  : "bg-background text-muted-foreground"
+              className={`px-4 py-2 text-xs font-semibold ${
+                imageMode === "url" ? "bg-red-600 text-white" : "bg-background text-muted-foreground"
               }`}
             >
               URL
             </button>
           </div>
 
-          {/* Upload input */}
+          {/* Upload — input natif, pas de label wrapper */}
           {imageMode === "upload" && (
-            <label
-              className={`flex flex-col items-center justify-center gap-1.5 h-28 w-full max-w-md rounded-xl border-2 border-dashed border-border/60 cursor-pointer transition-colors hover:border-red-400 hover:bg-red-50/30 ${uploading ? "opacity-50 pointer-events-none" : ""}`}
-            >
-              {uploading ? (
-                <Loader2 className="h-6 w-6 animate-spin text-red-500" />
-              ) : (
-                <Upload className="h-6 w-6 text-muted-foreground" />
-              )}
-              <span className="text-xs text-muted-foreground">
-                {uploading ? "Téléversement..." : "Appuyer pour sélectionner"}
-              </span>
-              <span className="text-[10px] text-muted-foreground/50">JPG, PNG, WebP — Max 5 Mo</span>
+            <div>
               <input
                 type="file"
                 accept="image/jpeg,image/png,image/gif,image/webp"
                 onChange={handleImageUpload}
-                className="sr-only"
                 disabled={uploading}
+                className="block w-full max-w-sm text-sm text-muted-foreground file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-red-600 file:text-white hover:file:bg-red-700 file:cursor-pointer file:touch-manipulation disabled:opacity-50"
               />
-            </label>
+              {uploading && (
+                <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1.5">
+                  <Loader2 className="h-3 w-3 animate-spin" /> Téléversement...
+                </p>
+              )}
+            </div>
           )}
 
-          {/* URL input */}
           {imageMode === "url" && (
             <Input
               placeholder="https://exemple.com/image.jpg"
@@ -276,12 +260,12 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
                 updateField("image", e.target.value);
                 setImagePreview(e.target.value);
               }}
-              className="max-w-md h-11"
+              className="max-w-sm h-11"
             />
           )}
         </div>
 
-        {/* 5 ─ Catégorie + Temps de lecture (côte à côte) */}
+        {/* 5 ─ Catégorie + Lecture */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label className="text-sm font-semibold">Catégorie *</Label>
@@ -289,10 +273,10 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
               value={formData.category}
               onValueChange={(value) => updateField("category", value)}
             >
-              <SelectTrigger className="h-11">
+              <SelectTrigger className="h-12">
                 <SelectValue placeholder="Choisir..." />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent position="popper">
                 {categories.map((cat) => (
                   <SelectItem key={cat} value={cat}>
                     {cat}
@@ -302,56 +286,53 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
             </Select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="readTime" className="text-sm font-semibold">
-              Lecture (min)
-            </Label>
+            <Label htmlFor="f-readTime" className="text-sm font-semibold">Lecture (min)</Label>
             <Input
-              id="readTime"
+              id="f-readTime"
               type="number"
               min={1}
+              inputMode="numeric"
               value={formData.readTime}
               onChange={(e) => updateField("readTime", parseInt(e.target.value) || 1)}
-              className="h-11"
+              className="h-12"
             />
           </div>
         </div>
 
-        {/* 6 ─ Auteur (côte à côte) */}
+        {/* 6 ─ Auteur + Rôle */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="authorName" className="text-sm font-semibold">
-              Auteur
-            </Label>
+            <Label htmlFor="f-author" className="text-sm font-semibold">Auteur</Label>
             <Input
-              id="authorName"
+              id="f-author"
               placeholder="Aminata Diallo"
               value={formData.authorName}
               onChange={(e) => updateField("authorName", e.target.value)}
-              className="h-11"
+              className="h-12"
+              autoComplete="off"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="authorRole" className="text-sm font-semibold">
-              Rôle
-            </Label>
+            <Label htmlFor="f-role" className="text-sm font-semibold">Rôle</Label>
             <Input
-              id="authorRole"
+              id="f-role"
               placeholder="Rédactrice en chef"
               value={formData.authorRole}
               onChange={(e) => updateField("authorRole", e.target.value)}
-              className="h-11"
+              className="h-12"
+              autoComplete="off"
             />
           </div>
         </div>
 
-        {/* 7 ─ Toggles (rangés sur une ligne) */}
-        <div className="flex flex-wrap gap-x-6 gap-y-3 p-4 rounded-xl bg-muted/40 border border-border/30">
+        {/* 7 ─ Toggles */}
+        <div className="flex flex-wrap gap-x-6 gap-y-4 p-4 rounded-xl bg-muted/30">
           <label className="flex items-center gap-2.5 cursor-pointer select-none">
             <input
               type="checkbox"
               checked={formData.published}
               onChange={(e) => updateField("published", e.target.checked)}
-              className="h-4 w-4 rounded border-border accent-red-600"
+              className="h-5 w-5 rounded accent-red-600"
             />
             <span className="text-sm font-medium">Publié</span>
           </label>
@@ -360,7 +341,7 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
               type="checkbox"
               checked={formData.isFeatured}
               onChange={(e) => updateField("isFeatured", e.target.checked)}
-              className="h-4 w-4 rounded border-border accent-red-600"
+              className="h-5 w-5 rounded accent-red-600"
             />
             <span className="text-sm font-medium">À la une</span>
           </label>
@@ -369,20 +350,20 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
               type="checkbox"
               checked={formData.isTrending}
               onChange={(e) => updateField("isTrending", e.target.checked)}
-              className="h-4 w-4 rounded border-border accent-red-600"
+              className="h-5 w-5 rounded accent-red-600"
             />
             <span className="text-sm font-medium">Tendance</span>
           </label>
         </div>
       </div>
 
-      {/* ── STICKY BOTTOM BAR — always visible on mobile ── */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-t border-border/40 p-3 sm:static sm:backdrop-blur-none sm:bg-transparent sm:border-0 sm:pt-4 lg:pt-2">
-        <div className="flex items-center gap-3 max-w-4xl mx-auto">
+      {/* ── BOTTOM BAR — sticky, PAS fixed ── */}
+      <div className="sticky bottom-0 z-40 mt-6 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-3 bg-background border-t border-border/40">
+        <div className="flex items-center gap-3">
           <Button
             type="button"
             variant="outline"
-            className="flex-shrink-0 h-11"
+            className="h-12 px-4"
             onClick={() => router.back()}
           >
             <ArrowLeft className="h-4 w-4 sm:mr-2" />
