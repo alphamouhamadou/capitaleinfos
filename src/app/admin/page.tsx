@@ -16,7 +16,7 @@ import {
   Loader2,
   ArrowRight,
 } from "lucide-react";
-import { categoryColors } from "@/lib/data";
+import { getCategoryColor } from "@/lib/category-utils";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -180,11 +180,7 @@ export default function AdminDashboardPage() {
                     <td className="py-3">
                       <Badge
                         variant="secondary"
-                        className={
-                          categoryColors[
-                            article.category as keyof typeof categoryColors
-                          ] || ""
-                        }
+                        className={getCategoryColor(article.category)}
                       >
                         {article.category}
                       </Badge>
@@ -250,11 +246,7 @@ export default function AdminDashboardPage() {
                     <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
                       <Badge
                         variant="secondary"
-                        className={`text-[10px] px-1.5 ${
-                          categoryColors[
-                            article.category as keyof typeof categoryColors
-                          ] || ""
-                        }`}
+                        className={`text-[10px] px-1.5 ${getCategoryColor(article.category)}`}
                       >
                         {article.category}
                       </Badge>
@@ -306,11 +298,7 @@ export default function AdminDashboardPage() {
                 <div className="flex items-center gap-2">
                   <Badge
                     variant="secondary"
-                    className={
-                      categoryColors[
-                        cat.name as keyof typeof categoryColors
-                      ] || ""
-                    }
+                    className={getCategoryColor(cat.name)}
                   >
                     {cat.name}
                   </Badge>
