@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { categoryColors } from '@/lib/data';
+import { getCategoryColor } from '@/lib/category-utils';
 import React from 'react';
 import {
   type Article,
@@ -81,7 +81,7 @@ function SearchDialogInner({ onArticleClick, onClose }: { onArticleClick: (id: s
                 >
                   <Badge
                     variant="secondary"
-                    className={`${categoryColors[article.category]} mt-0.5 text-[10px] flex-shrink-0`}
+                    className={`${getCategoryColor(article.category)} mt-0.5 text-[10px] flex-shrink-0`}
                   >
                     {article.category}
                   </Badge>
