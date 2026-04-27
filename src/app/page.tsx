@@ -19,6 +19,19 @@ export default function Home() {
   const [selectedArticleId, setSelectedArticleId] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
 
+  // Open article from URL parameter (e.g. ?article=123) — for shared links
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const articleId = params.get('article');
+      if (articleId) {
+        setSelectedArticleId(articleId);
+      }
+    } catch {
+      // Ignore URL parsing errors
+    }
+  }, []);
+
   // Keyboard shortcut for search
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -34,26 +47,6 @@ export default function Home() {
   const handleArticleClick = (id: string) => {
     setSelectedArticleId(id);
   };
-
-  // Auto-open article from shared URL hash (#article-xxxxx)
-  useEffect(() => {
-    const checkHash = () => {
-      const hash = window.location.hash;
-      if (hash.startsWith('#article-')) {
-        const id = hash.replace('#article-', '');
-        if (id) {
-          setSelectedArticleId(id);
-        }
-      }
-    };
-
-    // Check on mount
-    checkHash();
-
-    // Check on hash change (browser back/forward)
-    window.addEventListener('hashchange', checkHash);
-    return () => window.removeEventListener('hashchange', checkHash);
-  }, []);
 
   return (
     <ArticlesProvider>
