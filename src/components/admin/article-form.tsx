@@ -3,12 +3,11 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -16,8 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { Loader2, Save, ArrowLeft, Upload, Image as ImageIcon, Link, X } from "lucide-react";
+import { Loader2, Save, ArrowLeft, Upload, ImageIcon, X, Plus, Trash2 } from "lucide-react";
 import { categories } from "@/lib/category-utils";
 
 interface ArticleFormProps {
@@ -40,12 +38,13 @@ interface ArticleFormProps {
 
 export default function ArticleForm({ initialData, isEdit = false }: ArticleFormProps) {
   const router = useRouter();
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
-  const [imageMode, setImageMode] = useState<"upload" | "url">("upload");
   const [imagePreview, setImagePreview] = useState(initialData?.image || "");
+  const [imageMode, setImageMode] = useState<"upload" | "url">(
+    initialData?.image?.startsWith("http") ? "url" : "upload"
+  );
   const [formData, setFormData] = useState({
     title: initialData?.title || "",
     excerpt: initialData?.excerpt || "",
@@ -60,41 +59,30 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
     published: initialData?.published ?? true,
   });
 
+  const updateField = (field: string, value: string | number | boolean) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate type
-    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml"];
-    if (!allowedTypes.includes(file.type)) {
-      setError("Type de fichier non autorisé. Utilisez JPG, PNG, GIF ou WebP.");
-      return;
-    }
-
-    // Validate size
     if (file.size > 5 * 1024 * 1024) {
-      setError("L'image est trop volumineuse. Taille maximale : 5 Mo.");
+      setError("Image trop volumineuse (max 5 Mo).");
       return;
     }
 
     setUploading(true);
     setError("");
 
-    // Show local preview immediately
     const reader = new FileReader();
-    reader.onloadend = () => {
-      setImagePreview(reader.result as string);
-    };
+    reader.onloadend = () => setImagePreview(reader.result as string);
     reader.readAsDataURL(file);
 
     try {
       const uploadData = new FormData();
       uploadData.append("file", file);
-
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: uploadData,
-      });
+      const res = await fetch("/api/upload", { method: "POST", body: uploadData });
 
       if (res.ok) {
         const data = await res.json();
@@ -106,20 +94,11 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
         setImagePreview("");
       }
     } catch {
-      setError("Erreur de connexion au serveur");
+      setError("Erreur de connexion");
       setImagePreview("");
     } finally {
       setUploading(false);
-      // Reset file input
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
     }
-  };
-
-  const handleUrlChange = (url: string) => {
-    setFormData((prev) => ({ ...prev, image: url }));
-    setImagePreview(url);
   };
 
   const removeImage = () => {
@@ -145,9 +124,7 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
       });
 
       if (res.ok) {
-        if (typeof window !== "undefined") {
-          window.dispatchEvent(new CustomEvent("articles-refresh"));
-        }
+        window.dispatchEvent(new CustomEvent("articles-refresh"));
         router.push("/admin/articles");
         router.refresh();
       } else {
@@ -155,365 +132,276 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
         setError(data.error || "Une erreur est survenue");
       }
     } catch {
-      setError("Erreur de connexion au serveur");
+      setError("Erreur de connexion");
     } finally {
       setLoading(false);
     }
   };
 
-  const updateField = (field: string, value: string | number | boolean) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={() => router.back()}
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h1 className="text-2xl font-bold text-gray-900">
-            {isEdit ? "Modifier l'article" : "Nouvel article"}
-          </h1>
-        </div>
-        <Button
-          type="submit"
-          disabled={loading || uploading}
-          className="bg-red-600 hover:bg-red-700 text-white shadow-md"
-        >
-          {loading ? (
-            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-          ) : (
-            <Save className="h-4 w-4 mr-2" />
-          )}
-          {isEdit ? "Enregistrer" : "Publier"}
-        </Button>
-      </div>
-
+    <form onSubmit={handleSubmit} className="flex flex-col min-h-[calc(100vh-8rem)]">
+      {/* ── Error banner ── */}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg p-3">
+        <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg p-3 mb-4">
           {error}
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main content */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Title */}
-          <Card className="border-0 shadow-sm">
-            <CardContent className="p-6 space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="title" className="text-sm font-medium">
-                  Titre de l&apos;article *
-                </Label>
-                <Input
-                  id="title"
-                  placeholder="Saisissez le titre de l'article..."
-                  value={formData.title}
-                  onChange={(e) => updateField("title", e.target.value)}
-                  required
-                  className="text-lg h-12"
-                />
-              </div>
+      {/* ── FIELDS ── */}
+      <div className="flex-1 space-y-5 pb-24 lg:pb-4">
 
-              <div className="space-y-2">
-                <Label htmlFor="excerpt" className="text-sm font-medium">
-                  Résumé
-                </Label>
-                <Textarea
-                  id="excerpt"
-                  placeholder="Saisissez un résumé de l'article (optionnel)..."
-                  value={formData.excerpt}
-                  onChange={(e) => updateField("excerpt", e.target.value)}
-                  rows={3}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label className="text-sm font-medium">
-                  Contenu *
-                </Label>
-                <div className="min-h-[300px] border rounded-lg overflow-hidden">
-                  <textarea
-                    placeholder="Saisissez le contenu de l'article en Markdown..."
-                    value={formData.content}
-                    onChange={(e) => updateField("content", e.target.value)}
-                    required
-                    className="w-full min-h-[300px] p-4 text-sm resize-y focus:outline-none"
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        {/* 1 ─ Titre */}
+        <div className="space-y-2">
+          <Label htmlFor="title" className="text-sm font-semibold">
+            Titre *
+          </Label>
+          <Input
+            id="title"
+            placeholder="Saisissez le titre de l'article..."
+            value={formData.title}
+            onChange={(e) => updateField("title", e.target.value)}
+            required
+            className="text-lg h-12"
+          />
         </div>
 
-        {/* Sidebar */}
-        <div className="space-y-6">
-          {/* Publishing */}
-          <Card className="border-0 shadow-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base font-semibold">
-                Publication
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="published" className="text-sm">
-                  Publié
-                </Label>
-                <Switch
-                  id="published"
-                  checked={formData.published}
-                  onCheckedChange={(checked) =>
-                    updateField("published", checked)
-                  }
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <Label htmlFor="featured" className="text-sm">
-                  À la une
-                </Label>
-                <Switch
-                  id="featured"
-                  checked={formData.isFeatured}
-                  onCheckedChange={(checked) =>
-                    updateField("isFeatured", checked)
-                  }
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <Label htmlFor="trending" className="text-sm">
-                  Tendance
-                </Label>
-                <Switch
-                  id="trending"
-                  checked={formData.isTrending}
-                  onCheckedChange={(checked) =>
-                    updateField("isTrending", checked)
-                  }
-                />
-              </div>
-            </CardContent>
-          </Card>
+        {/* 2 ─ Résumé */}
+        <div className="space-y-2">
+          <Label htmlFor="excerpt" className="text-sm font-semibold">
+            Résumé
+          </Label>
+          <Textarea
+            id="excerpt"
+            placeholder="Un court résumé de l'article (optionnel)..."
+            value={formData.excerpt}
+            onChange={(e) => updateField("excerpt", e.target.value)}
+            rows={2}
+          />
+        </div>
 
-          {/* Category & Meta */}
-          <Card className="border-0 shadow-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base font-semibold">
-                Catégorie & Métadonnées
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label className="text-sm">Catégorie *</Label>
-                <Select
-                  value={formData.category}
-                  onValueChange={(value) => updateField("category", value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Choisir une catégorie" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((cat) => (
-                      <SelectItem key={cat} value={cat}>
-                        <span className="flex items-center gap-2">
-                          <span
-                            className={`w-2 h-2 rounded-full ${
-                              cat === "Politique"
-                                ? "bg-red-500"
-                                : cat === "Économie"
-                                ? "bg-amber-500"
-                                : cat === "Sport"
-                                ? "bg-green-500"
-                                : cat === "Culture"
-                                ? "bg-purple-500"
-                                : cat === "Société"
-                                ? "bg-teal-500"
-                                : cat === "International"
-                                ? "bg-orange-500"
-                                : "bg-emerald-500"
-                            }`}
-                          />
-                          {cat}
-                        </span>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+        {/* 3 ─ Contenu */}
+        <div className="space-y-2">
+          <Label className="text-sm font-semibold">Contenu *</Label>
+          <Textarea
+            placeholder="Saisissez le contenu de l'article..."
+            value={formData.content}
+            onChange={(e) => updateField("content", e.target.value)}
+            required
+            rows={12}
+            className="min-h-[200px] lg:min-h-[350px]"
+          />
+        </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="readTime" className="text-sm">
-                  Temps de lecture (min)
-                </Label>
-                <Input
-                  id="readTime"
-                  type="number"
-                  min={1}
-                  value={formData.readTime}
-                  onChange={(e) =>
-                    updateField("readTime", parseInt(e.target.value) || 1)
-                  }
-                />
-              </div>
-            </CardContent>
-          </Card>
+        {/* 4 ─ Image */}
+        <div className="space-y-3">
+          <Label className="text-sm font-semibold">Image de l'article</Label>
 
-          {/* Image */}
-          <Card className="border-0 shadow-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base font-semibold">
-                Image de l&apos;article
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Mode toggle */}
-              <div className="flex rounded-lg border overflow-hidden">
-                <button
-                  type="button"
-                  onClick={() => setImageMode("upload")}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-medium transition-colors ${
-                    imageMode === "upload"
-                      ? "bg-red-600 text-white"
-                      : "bg-background text-muted-foreground hover:bg-muted"
-                  }`}
-                >
-                  <Upload className="h-3.5 w-3.5" />
-                  Téléverser
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setImageMode("url")}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-medium transition-colors ${
-                    imageMode === "url"
-                      ? "bg-red-600 text-white"
-                      : "bg-background text-muted-foreground hover:bg-muted"
-                  }`}
-                >
-                  <Link className="h-3.5 w-3.5" />
-                  URL
-                </button>
-              </div>
+          {/* Preview */}
+          {imagePreview && (
+            <div className="relative aspect-video w-full max-w-md rounded-xl overflow-hidden border border-border/50">
+              <Image
+                src={imagePreview}
+                alt="Aperçu"
+                fill
+                className="object-cover"
+                sizes="500px"
+                unoptimized
+              />
+              <button
+                type="button"
+                onClick={removeImage}
+                className="absolute top-2 right-2 h-8 w-8 rounded-full bg-black/60 text-white flex items-center justify-center"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          )}
 
-              {/* Image preview */}
-              {imagePreview && (
-                <div className="relative aspect-video rounded-xl overflow-hidden border border-border/50">
-                  <Image
-                    src={imagePreview}
-                    alt="Aperçu de l'image"
-                    fill
-                    className="object-cover"
-                    sizes="400px"
-                    unoptimized
-                  />
-                  <button
-                    type="button"
-                    onClick={removeImage}
-                    className="absolute top-2 right-2 h-7 w-7 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center transition-colors"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </button>
-                </div>
+          {/* Upload toggle */}
+          <div className="flex rounded-lg border overflow-hidden w-fit">
+            <button
+              type="button"
+              onClick={() => setImageMode("upload")}
+              className={`px-4 py-2 text-xs font-semibold transition-colors ${
+                imageMode === "upload"
+                  ? "bg-red-600 text-white"
+                  : "bg-background text-muted-foreground"
+              }`}
+            >
+              Téléverser
+            </button>
+            <button
+              type="button"
+              onClick={() => setImageMode("url")}
+              className={`px-4 py-2 text-xs font-semibold transition-colors ${
+                imageMode === "url"
+                  ? "bg-red-600 text-white"
+                  : "bg-background text-muted-foreground"
+              }`}
+            >
+              URL
+            </button>
+          </div>
+
+          {/* Upload input */}
+          {imageMode === "upload" && (
+            <label
+              className={`flex flex-col items-center justify-center gap-1.5 h-28 w-full max-w-md rounded-xl border-2 border-dashed border-border/60 cursor-pointer transition-colors hover:border-red-400 hover:bg-red-50/30 ${uploading ? "opacity-50 pointer-events-none" : ""}`}
+            >
+              {uploading ? (
+                <Loader2 className="h-6 w-6 animate-spin text-red-500" />
+              ) : (
+                <Upload className="h-6 w-6 text-muted-foreground" />
               )}
+              <span className="text-xs text-muted-foreground">
+                {uploading ? "Téléversement..." : "Appuyer pour sélectionner"}
+              </span>
+              <span className="text-[10px] text-muted-foreground/50">JPG, PNG, WebP — Max 5 Mo</span>
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/gif,image/webp"
+                onChange={handleImageUpload}
+                className="sr-only"
+                disabled={uploading}
+              />
+            </label>
+          )}
 
-              {/* Upload mode */}
-              {imageMode === "upload" && (
-                <div>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml"
-                    onChange={handleImageUpload}
-                    className="hidden"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="w-full h-24 border-dashed flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-foreground hover:border-primary/50 transition-colors"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={uploading}
-                  >
-                    {uploading ? (
-                      <>
-                        <Loader2 className="h-6 w-6 animate-spin" />
-                        <span className="text-xs">Téléversement en cours...</span>
-                      </>
-                    ) : (
-                      <>
-                        <ImageIcon className="h-6 w-6" />
-                        <span className="text-xs font-medium">
-                          Cliquer pour sélectionner une image
-                        </span>
-                        <span className="text-[10px] text-muted-foreground/60">
-                          JPG, PNG, GIF, WebP — Max 5 Mo
-                        </span>
-                      </>
-                    )}
-                  </Button>
-                </div>
-              )}
+          {/* URL input */}
+          {imageMode === "url" && (
+            <Input
+              placeholder="https://exemple.com/image.jpg"
+              value={imageMode === "url" && !formData.image.startsWith("/uploads/") ? formData.image : ""}
+              onChange={(e) => {
+                updateField("image", e.target.value);
+                setImagePreview(e.target.value);
+              }}
+              className="max-w-md h-11"
+            />
+          )}
+        </div>
 
-              {/* URL mode */}
-              {imageMode === "url" && (
-                <div className="space-y-2">
-                  <Label htmlFor="image-url" className="text-sm">
-                    URL de l&apos;image
-                  </Label>
-                  <Input
-                    id="image-url"
-                    placeholder="https://exemple.com/image.jpg"
-                    value={imageMode === "url" && !formData.image.startsWith("/uploads/") ? formData.image : ""}
-                    onChange={(e) => handleUrlChange(e.target.value)}
-                  />
-                </div>
-              )}
+        {/* 5 ─ Catégorie + Temps de lecture (côte à côte) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label className="text-sm font-semibold">Catégorie *</Label>
+            <Select
+              value={formData.category}
+              onValueChange={(value) => updateField("category", value)}
+            >
+              <SelectTrigger className="h-11">
+                <SelectValue placeholder="Choisir..." />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((cat) => (
+                  <SelectItem key={cat} value={cat}>
+                    {cat}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="readTime" className="text-sm font-semibold">
+              Lecture (min)
+            </Label>
+            <Input
+              id="readTime"
+              type="number"
+              min={1}
+              value={formData.readTime}
+              onChange={(e) => updateField("readTime", parseInt(e.target.value) || 1)}
+              className="h-11"
+            />
+          </div>
+        </div>
 
-              {!imagePreview && (
-                <p className="text-[11px] text-muted-foreground/60 text-center">
-                  Aucune image sélectionnée — une image par défaut sera utilisée
-                </p>
-              )}
-            </CardContent>
-          </Card>
+        {/* 6 ─ Auteur (côte à côte) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="authorName" className="text-sm font-semibold">
+              Auteur
+            </Label>
+            <Input
+              id="authorName"
+              placeholder="Aminata Diallo"
+              value={formData.authorName}
+              onChange={(e) => updateField("authorName", e.target.value)}
+              className="h-11"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="authorRole" className="text-sm font-semibold">
+              Rôle
+            </Label>
+            <Input
+              id="authorRole"
+              placeholder="Rédactrice en chef"
+              value={formData.authorRole}
+              onChange={(e) => updateField("authorRole", e.target.value)}
+              className="h-11"
+            />
+          </div>
+        </div>
 
-          {/* Author */}
-          <Card className="border-0 shadow-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base font-semibold">
-                Auteur
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="authorName" className="text-sm">
-                  Nom de l&apos;auteur
-                </Label>
-                <Input
-                  id="authorName"
-                  placeholder="Aminata Diallo"
-                  value={formData.authorName}
-                  onChange={(e) => updateField("authorName", e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="authorRole" className="text-sm">
-                  Rôle de l&apos;auteur
-                </Label>
-                <Input
-                  id="authorRole"
-                  placeholder="Rédactrice en chef"
-                  value={formData.authorRole}
-                  onChange={(e) => updateField("authorRole", e.target.value)}
-                />
-              </div>
-            </CardContent>
-          </Card>
+        {/* 7 ─ Toggles (rangés sur une ligne) */}
+        <div className="flex flex-wrap gap-x-6 gap-y-3 p-4 rounded-xl bg-muted/40 border border-border/30">
+          <label className="flex items-center gap-2.5 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={formData.published}
+              onChange={(e) => updateField("published", e.target.checked)}
+              className="h-4 w-4 rounded border-border accent-red-600"
+            />
+            <span className="text-sm font-medium">Publié</span>
+          </label>
+          <label className="flex items-center gap-2.5 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={formData.isFeatured}
+              onChange={(e) => updateField("isFeatured", e.target.checked)}
+              className="h-4 w-4 rounded border-border accent-red-600"
+            />
+            <span className="text-sm font-medium">À la une</span>
+          </label>
+          <label className="flex items-center gap-2.5 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={formData.isTrending}
+              onChange={(e) => updateField("isTrending", e.target.checked)}
+              className="h-4 w-4 rounded border-border accent-red-600"
+            />
+            <span className="text-sm font-medium">Tendance</span>
+          </label>
+        </div>
+      </div>
+
+      {/* ── STICKY BOTTOM BAR — always visible on mobile ── */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-t border-border/40 p-3 sm:static sm:backdrop-blur-none sm:bg-transparent sm:border-0 sm:pt-4 lg:pt-2">
+        <div className="flex items-center gap-3 max-w-4xl mx-auto">
+          <Button
+            type="button"
+            variant="outline"
+            className="flex-shrink-0 h-11"
+            onClick={() => router.back()}
+          >
+            <ArrowLeft className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">Retour</span>
+          </Button>
+          <Button
+            type="submit"
+            disabled={loading || uploading}
+            className="flex-1 h-12 bg-red-600 hover:bg-red-700 text-white font-semibold text-base sm:flex-none sm:px-8"
+          >
+            {loading ? (
+              <Loader2 className="h-5 w-5 animate-spin" />
+            ) : (
+              <>
+                <Save className="h-4 w-4 mr-2" />
+                {isEdit ? "Enregistrer" : "Publier"}
+              </>
+            )}
+          </Button>
         </div>
       </div>
     </form>
