@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { Calendar, Clock, User, ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { categoryColors } from '@/lib/data';
+import { getCategoryColor } from '@/lib/data';
 import { useArticles } from '@/lib/articles-context';
 
 interface HeroSectionProps {
@@ -50,7 +50,7 @@ export function HeroSection({ onArticleClick }: HeroSectionProps) {
 
   const sideItem = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const } },
   };
 
   return (
@@ -98,7 +98,7 @@ export function HeroSection({ onArticleClick }: HeroSectionProps) {
             {/* Content at the bottom */}
             <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-7 lg:p-9">
               {/* Category badge */}
-              <Badge className={`${categoryColors[mainArticle.category]} border-0 text-[10px] font-bold px-3 py-1 shadow-md mb-3`}>
+              <Badge className={`${getCategoryColor(mainArticle.category)} border-0 text-[10px] font-bold px-3 py-1 shadow-md mb-3`}>
                 {mainArticle.category}
               </Badge>
 
@@ -170,7 +170,7 @@ export function HeroSection({ onArticleClick }: HeroSectionProps) {
 
                 {/* Category badge – top left */}
                 <div className="absolute top-2.5 left-2.5">
-                  <Badge className={`${categoryColors[article.category]} border-0 text-[9px] font-bold px-2 py-0.5 shadow-md`}>
+                  <Badge className={`${getCategoryColor(article.category)} border-0 text-[9px] font-bold px-2 py-0.5 shadow-md`}>
                     {article.category}
                   </Badge>
                 </div>
