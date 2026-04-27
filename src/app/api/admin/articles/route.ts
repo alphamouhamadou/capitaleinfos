@@ -11,6 +11,7 @@ const articleSchema = z.object({
   authorName: z.string().optional().default("Capitale Infos"),
   authorRole: z.string().optional().default("Rédaction"),
   image: z.string().default("/img/hero-dakar.jpg"),
+  videoUrl: z.string().optional().default(""),
   readTime: z.number().int().min(1).default(3),
   isFeatured: z.boolean().default(false),
   isTrending: z.boolean().default(false),
