@@ -27,6 +27,7 @@ interface ArticleFormProps {
     authorName: string;
     authorRole: string;
     image: string;
+    videoUrl?: string;
     readTime: number;
     isFeatured: boolean;
     isTrending: boolean;
