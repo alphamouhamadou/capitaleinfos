@@ -26,6 +26,7 @@ model Article {
   authorName String
   authorRole String
   image      String
+  videoUrl    String   @default("")
   readTime   Int
   isFeatured Boolean  @default(false)
   isTrending Boolean  @default(false)
