@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, Save, ArrowLeft, X } from "lucide-react";
+import { Loader2, Save, ArrowLeft, X, Upload, Link as LinkIcon } from "lucide-react";
 import { categories } from "@/lib/category-utils";
 
 interface ArticleFormProps {
@@ -40,15 +40,12 @@ interface ArticleFormProps {
 function VideoEmbed({ url }: { url: string }) {
   const embedUrl = useMemo(() => {
     try {
-      // YouTube watch URL
       let match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
       if (match) return `https://www.youtube.com/embed/${match[1]}`;
 
-      // YouTube shorts
       match = url.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/);
       if (match) return `https://www.youtube.com/embed/${match[1]}`;
 
-      // Dailymotion
       match = url.match(/dailymotion\.com\/video\/([a-zA-Z0-9]+)/);
       if (match) return `https://www.dailymotion.com/embed/video/${match[1]}`;
 
@@ -77,15 +74,36 @@ function VideoEmbed({ url }: { url: string }) {
   );
 }
 
+/** Lecteur vidéo pour fichier uploadé (mp4, webm) */
+function VideoPlayer({ src }: { src: string }) {
+  return (
+    <video
+      src={src}
+      controls
+      playsInline
+      preload="metadata"
+      className="w-full h-full object-contain bg-black"
+    >
+      Votre navigateur ne supporte pas la lecture vidéo.
+    </video>
+  );
+}
+
 export default function ArticleForm({ initialData, isEdit = false }: ArticleFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadingVideo, setUploadingVideo] = useState(false);
   const [error, setError] = useState("");
   const [imagePreview, setImagePreview] = useState(initialData?.image || "");
   const [imageMode, setImageMode] = useState<"upload" | "url">(
     initialData?.image?.startsWith("http") ? "url" : "upload"
   );
+  const [videoMode, setVideoMode] = useState<"upload" | "url">(
+    initialData?.videoUrl?.startsWith("http") &&
+    !initialData?.videoUrl?.includes("/uploads/videos/") ? "url" : "upload"
+  );
+  const [videoPreview, setVideoPreview] = useState(initialData?.videoUrl || "");
   const [formData, setFormData] = useState({
     title: initialData?.title || "",
     excerpt: initialData?.excerpt || "",
@@ -148,9 +166,57 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
     setImagePreview("");
   };
 
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const allowedTypes = ["video/mp4", "video/webm", "video/ogg"];
+    if (!allowedTypes.includes(file.type)) {
+      setError("Format vidéo non supporté. Utilisez MP4, WebM ou OGG.");
+      return;
+    }
+
+    if (file.size > 50 * 1024 * 1024) {
+      setError("Vidéo trop volumineuse (max 50 Mo).");
+      return;
+    }
+
+    setUploadingVideo(true);
+    setError("");
+
+    const localUrl = URL.createObjectURL(file);
+    setVideoPreview(localUrl);
+
+    try {
+      const uploadData = new FormData();
+      uploadData.append("file", file);
+      const res = await fetch("/api/upload", { method: "POST", body: uploadData });
+
+      if (res.ok) {
+        const data = await res.json();
+        setFormData((prev) => ({ ...prev, videoUrl: data.url }));
+        setVideoPreview(data.url);
+      } else {
+        const data = await res.json();
+        setError(data.error || "Erreur lors du téléversement de la vidéo");
+        setVideoPreview("");
+      }
+    } catch {
+      setError("Erreur de connexion");
+      setVideoPreview("");
+    } finally {
+      setUploadingVideo(false);
+    }
+  };
+
+  const removeVideo = () => {
+    setFormData((prev) => ({ ...prev, videoUrl: "" }));
+    setVideoPreview("");
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (loading || uploading) return;
+    if (loading || uploading || uploadingVideo) return;
     setError("");
     setLoading(true);
 
@@ -181,9 +247,11 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
     }
   };
 
+  const isExternalVideo = (url: string) =>
+    url.includes("youtube.com") || url.includes("youtu.be") || url.includes("dailymotion.com");
+
   return (
     <form onSubmit={handleSubmit} className="pb-20 sm:pb-0">
-      {/* ── Error ── */}
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg p-3 mb-4">
           {error}
@@ -310,20 +378,86 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
         {/* 4b ─ Vidéo */}
         <div className="space-y-3">
           <Label className="text-sm font-semibold">Vidéo (optionnel)</Label>
-          <Input
-            placeholder="https://www.youtube.com/watch?v=..."
-            value={formData.videoUrl}
-            onChange={(e) => updateField("videoUrl", e.target.value)}
-            className="max-w-sm h-11"
-            autoComplete="off"
-          />
-          <p className="text-xs text-muted-foreground">
-            Collez un lien YouTube, Dailymotion ou tout autre lien vidéo. La vidéo s&apos;affichera dans l&apos;article.
-          </p>
 
-          {formData.videoUrl && (
-            <div className="w-full max-w-sm aspect-video rounded-xl overflow-hidden border border-border/50 bg-black">
-              <VideoEmbed url={formData.videoUrl} />
+          {/* Aperçu vidéo */}
+          {videoPreview && (
+            <div className="relative w-full max-w-sm aspect-video rounded-xl overflow-hidden border border-border/50 bg-black">
+              {isExternalVideo(videoPreview) ? (
+                <VideoEmbed url={videoPreview} />
+              ) : (
+                <VideoPlayer src={videoPreview} />
+              )}
+              <button
+                type="button"
+                onClick={removeVideo}
+                className="absolute top-2 right-2 h-7 w-7 rounded-full bg-black/70 text-white flex items-center justify-center z-10"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          )}
+
+          {/* Toggle Téléverser / URL */}
+          <div className="flex rounded-lg border overflow-hidden w-fit">
+            <button
+              type="button"
+              onClick={() => setVideoMode("upload")}
+              className={`flex items-center gap-1.5 px-4 py-2 text-xs font-semibold ${
+                videoMode === "upload" ? "bg-red-600 text-white" : "bg-background text-muted-foreground"
+              }`}
+            >
+              <Upload className="h-3 w-3" />
+              Téléverser
+            </button>
+            <button
+              type="button"
+              onClick={() => setVideoMode("url")}
+              className={`flex items-center gap-1.5 px-4 py-2 text-xs font-semibold ${
+                videoMode === "url" ? "bg-red-600 text-white" : "bg-background text-muted-foreground"
+              }`}
+            >
+              <LinkIcon className="h-3 w-3" />
+              Lien
+            </button>
+          </div>
+
+          {/* Mode Téléverser */}
+          {videoMode === "upload" && (
+            <div>
+              <input
+                type="file"
+                accept="video/mp4,video/webm,video/ogg"
+                onChange={handleVideoUpload}
+                disabled={uploadingVideo}
+                className="block w-full max-w-sm text-sm text-muted-foreground file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-red-600 file:text-white hover:file:bg-red-700 file:cursor-pointer file:touch-manipulation disabled:opacity-50"
+              />
+              <p className="text-xs text-muted-foreground mt-1.5">
+                MP4, WebM ou OGG — Max 50 Mo
+              </p>
+              {uploadingVideo && (
+                <p className="text-xs text-red-600 mt-1 flex items-center gap-1.5 font-medium">
+                  <Loader2 className="h-3 w-3 animate-spin" /> Téléversement en cours...
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Mode Lien */}
+          {videoMode === "url" && (
+            <div>
+              <Input
+                placeholder="https://www.youtube.com/watch?v=..."
+                value={videoMode === "url" && isExternalVideo(formData.videoUrl) ? formData.videoUrl : ""}
+                onChange={(e) => {
+                  updateField("videoUrl", e.target.value);
+                  setVideoPreview(e.target.value);
+                }}
+                className="max-w-sm h-11"
+                autoComplete="off"
+              />
+              <p className="text-xs text-muted-foreground mt-1.5">
+                YouTube, Dailymotion ou tout lien vidéo externe
+              </p>
             </div>
           )}
         </div>
@@ -434,10 +568,10 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
           </Button>
           <Button
             type="submit"
-            disabled={loading || uploading}
+            disabled={loading || uploading || uploadingVideo}
             className="flex-1 h-12 bg-red-600 hover:bg-red-700 text-white font-semibold text-base sm:flex-none sm:px-8"
           >
-            {loading ? (
+            {loading || uploadingVideo ? (
               <Loader2 className="h-5 w-5 animate-spin" />
             ) : (
               <>
