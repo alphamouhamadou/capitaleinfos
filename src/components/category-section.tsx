@@ -7,9 +7,9 @@ import { Calendar, Clock, ArrowUpRight, Layers } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-  categoryColors,
+  getCategoryColor,
   type Category,
-} from '@/lib/data';
+} from '@/lib/category-utils';
 import { useArticles } from '@/lib/articles-context';
 
 const tabCategories: Category[] = [
@@ -81,7 +81,7 @@ export function CategorySection({ onArticleClick }: CategorySectionProps) {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+            transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] as const }}
           >
             {/* Loading skeleton */}
             {loading && (
@@ -141,7 +141,7 @@ export function CategorySection({ onArticleClick }: CategorySectionProps) {
                     {/* Category badge — top-left */}
                     <div className="absolute top-3 left-3">
                       <Badge
-                        className={`${categoryColors[mainArticle.category]} border-0 text-[9px] font-bold px-2.5 py-0.5 shadow-md tracking-wide uppercase`}
+                        className={`${getCategoryColor(mainArticle.category)} border-0 text-[9px] font-bold px-2.5 py-0.5 shadow-md tracking-wide uppercase`}
                       >
                         {mainArticle.category}
                       </Badge>
@@ -187,7 +187,7 @@ export function CategorySection({ onArticleClick }: CategorySectionProps) {
                       transition={{
                         duration: 0.3,
                         delay: index * 0.07,
-                        ease: [0.25, 0.46, 0.45, 0.94],
+                        ease: [0.25, 0.46, 0.45, 0.94] as const,
                       }}
                     >
                       {/* Thumbnail */}
@@ -206,7 +206,7 @@ export function CategorySection({ onArticleClick }: CategorySectionProps) {
                       <div className="min-w-0 flex-1 flex flex-col justify-center py-0.5">
                         <Badge
                           variant="secondary"
-                          className={`mb-1.5 text-[9px] font-bold px-2 py-0 h-4 w-fit border-0 ${categoryColors[article.category]}`}
+                          className={`mb-1.5 text-[9px] font-bold px-2 py-0 h-4 w-fit border-0 ${getCategoryColor(article.category)}`}
                         >
                           {article.category}
                         </Badge>
