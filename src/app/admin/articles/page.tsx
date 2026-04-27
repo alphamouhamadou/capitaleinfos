@@ -39,7 +39,7 @@ import {
   Loader2,
   FileText,
 } from "lucide-react";
-import { categories, categoryColors } from "@/lib/data";
+import { categories, getCategoryColor } from "@/lib/category-utils";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -203,11 +203,7 @@ export default function AdminArticlesPage() {
                     <td className="hidden sm:table-cell">
                       <Badge
                         variant="secondary"
-                        className={
-                          categoryColors[
-                            article.category as keyof typeof categoryColors
-                          ] || ""
-                        }
+                        className={getCategoryColor(article.category)}
                       >
                         {article.category}
                       </Badge>
@@ -315,11 +311,7 @@ export default function AdminArticlesPage() {
                     <div className="flex items-center gap-1.5 mb-2 flex-wrap">
                       <Badge
                         variant="secondary"
-                        className={
-                          categoryColors[
-                            article.category as keyof typeof categoryColors
-                          ] || ""
-                        }
+                        className={getCategoryColor(article.category)}
                       >
                         {article.category}
                       </Badge>
