@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/select";
 import { Loader2, Save, ArrowLeft, Upload, X } from "lucide-react";
 import { categories } from "@/lib/category-utils";
-
+import { useState, useMemo } from "react";
 interface ArticleFormProps {
   initialData?: {
     id?: string;
@@ -35,7 +35,46 @@ interface ArticleFormProps {
   };
   isEdit?: boolean;
 }
+/** Convertit une URL YouTube/Dailymotion en URL embed */
+function VideoEmbed({ url }: { url: string }) {
+  const embedUrl = useMemo(() => {
+    try {
+      // YouTube watch URL
+      let match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+      if (match) return `https://www.youtube.com/embed/${match[1]}`;
 
+      // YouTube shorts
+      match = url.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/);
+      if (match) return `https://www.youtube.com/embed/${match[1]}`;
+
+      // Dailymotion
+      match = url.match(/dailymotion\.com\/video\/([a-zA-Z0-9]+)/);
+      if (match) return `https://www.dailymotion.com/embed/video/${match[1]}`;
+
+      return null;
+    } catch {
+      return null;
+    }
+  }, [url]);
+
+  if (!embedUrl) {
+    return (
+      <div className="w-full h-full flex items-center justify-center text-white/60 text-xs p-3 text-center">
+        Aperçu non disponible pour ce lien
+      </div>
+    );
+  }
+
+  return (
+    <iframe
+      src={embedUrl}
+      className="w-full h-full"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowFullScreen
+      title="Vidéo"
+    />
+  );
+}
 export default function ArticleForm({ initialData, isEdit = false }: ArticleFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
