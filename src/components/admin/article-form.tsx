@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -14,9 +14,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, Save, ArrowLeft, Upload, X } from "lucide-react";
+import { Loader2, Save, ArrowLeft, X } from "lucide-react";
 import { categories } from "@/lib/category-utils";
-import { useState, useMemo } from "react";
+
 interface ArticleFormProps {
   initialData?: {
     id?: string;
@@ -35,6 +35,7 @@ interface ArticleFormProps {
   };
   isEdit?: boolean;
 }
+
 /** Convertit une URL YouTube/Dailymotion en URL embed */
 function VideoEmbed({ url }: { url: string }) {
   const embedUrl = useMemo(() => {
@@ -75,6 +76,7 @@ function VideoEmbed({ url }: { url: string }) {
     />
   );
 }
+
 export default function ArticleForm({ initialData, isEdit = false }: ArticleFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -275,7 +277,6 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
             </button>
           </div>
 
-          {/* Upload — input natif, pas de label wrapper */}
           {imageMode === "upload" && (
             <div>
               <input
@@ -305,27 +306,28 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
             />
           )}
         </div>
-        {/* 4b ─ Vidéo */}
-<div className="space-y-3">
-  <Label className="text-sm font-semibold">Vidéo (optionnel)</Label>
-  <Input
-    placeholder="https://www.youtube.com/watch?v=..."
-    value={formData.videoUrl}
-    onChange={(e) => updateField("videoUrl", e.target.value)}
-    className="max-w-sm h-11"
-    autoComplete="off"
-  />
-  <p className="text-xs text-muted-foreground">
-    Collez un lien YouTube, Dailymotion ou tout autre lien vidéo. La vidéo s&apos;affichera dans l&apos;article.
-  </p>
 
-  {/* Preview vidéo */}
-  {formData.videoUrl && (
-    <div className="w-full max-w-sm aspect-video rounded-xl overflow-hidden border border-border/50 bg-black">
-      <VideoEmbed url={formData.videoUrl} />
-    </div>
-  )}
-</div>
+        {/* 4b ─ Vidéo */}
+        <div className="space-y-3">
+          <Label className="text-sm font-semibold">Vidéo (optionnel)</Label>
+          <Input
+            placeholder="https://www.youtube.com/watch?v=..."
+            value={formData.videoUrl}
+            onChange={(e) => updateField("videoUrl", e.target.value)}
+            className="max-w-sm h-11"
+            autoComplete="off"
+          />
+          <p className="text-xs text-muted-foreground">
+            Collez un lien YouTube, Dailymotion ou tout autre lien vidéo. La vidéo s&apos;affichera dans l&apos;article.
+          </p>
+
+          {formData.videoUrl && (
+            <div className="w-full max-w-sm aspect-video rounded-xl overflow-hidden border border-border/50 bg-black">
+              <VideoEmbed url={formData.videoUrl} />
+            </div>
+          )}
+        </div>
+
         {/* 5 ─ Catégorie + Lecture */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
@@ -418,7 +420,7 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
         </div>
       </div>
 
-      {/* ── BOTTOM BAR — sticky, PAS fixed ── */}
+      {/* ── BOTTOM BAR ── */}
       <div className="sticky bottom-0 z-40 mt-6 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-3 bg-background border-t border-border/40">
         <div className="flex items-center gap-3">
           <Button
