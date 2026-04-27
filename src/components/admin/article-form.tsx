@@ -52,6 +52,7 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
     authorName: initialData?.authorName || "",
     authorRole: initialData?.authorRole || "",
     image: initialData?.image || "",
+    videoUrl: initialData?.videoUrl || "",
     readTime: initialData?.readTime || 3,
     isFeatured: initialData?.isFeatured || false,
     isTrending: initialData?.isTrending || false,
