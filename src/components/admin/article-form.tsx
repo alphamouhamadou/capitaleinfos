@@ -266,7 +266,27 @@ export default function ArticleForm({ initialData, isEdit = false }: ArticleForm
             />
           )}
         </div>
+        {/* 4b ─ Vidéo */}
+<div className="space-y-3">
+  <Label className="text-sm font-semibold">Vidéo (optionnel)</Label>
+  <Input
+    placeholder="https://www.youtube.com/watch?v=..."
+    value={formData.videoUrl}
+    onChange={(e) => updateField("videoUrl", e.target.value)}
+    className="max-w-sm h-11"
+    autoComplete="off"
+  />
+  <p className="text-xs text-muted-foreground">
+    Collez un lien YouTube, Dailymotion ou tout autre lien vidéo. La vidéo s&apos;affichera dans l&apos;article.
+  </p>
 
+  {/* Preview vidéo */}
+  {formData.videoUrl && (
+    <div className="w-full max-w-sm aspect-video rounded-xl overflow-hidden border border-border/50 bg-black">
+      <VideoEmbed url={formData.videoUrl} />
+    </div>
+  )}
+</div>
         {/* 5 ─ Catégorie + Lecture */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
