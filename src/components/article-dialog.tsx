@@ -93,7 +93,7 @@ export function ArticleDialog({
   });
 
   const handleShareUrl = () => {
-    return `${window.location.origin}/?article=${article.id}`;
+    return `${window.location.origin}/article/${article.id}`;
   };
 
   const handleNativeShare = async () => {
