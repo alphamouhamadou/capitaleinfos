@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Loader2, Save, ArrowLeft, Upload, Image as ImageIcon, Link, X } from "lucide-react";
-import { categories } from "@/lib/data";
+import { categories } from "@/lib/category-utils";
 
 interface ArticleFormProps {
   initialData?: {
