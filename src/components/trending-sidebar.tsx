@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import { Flame, TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { categoryColors } from '@/lib/data';
 import { useArticles, type Article } from '@/lib/articles-context';
 
 interface TrendingSidebarProps {
